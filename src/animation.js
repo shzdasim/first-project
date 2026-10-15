@@ -104,18 +104,94 @@
   }
 
   // =========================================================================
+  // REFINED HEAD SILHOUETTE HELPERS
+  // =========================================================================
+
+  /**
+   * Dignified 1971 Businessman Head Profile
+   */
+  function drawDignifiedHead(ctx, facing = 1) {
+    ctx.save();
+    ctx.scale(facing, 1);
+    ctx.fillStyle = CONFIG.colors.red;
+
+    // Head profile contour
+    ctx.beginPath();
+    ctx.moveTo(-9, -4);                                 // nape of neck
+    ctx.bezierCurveTo(-18, -10, -20, -32, -8, -42);     // back of skull & 1971 tapered hair
+    ctx.bezierCurveTo(-2, -47, 10, -47, 15, -38);       // crown & hairstyle volume
+    ctx.bezierCurveTo(18, -32, 17, -26, 16, -20);       // forehead hairline & brow
+    ctx.lineTo(21, -16);                                // straight, distinguished nose
+    ctx.lineTo(16.5, -13);                              // under-nose base
+    ctx.lineTo(17, -10);                                // upper lip
+    ctx.lineTo(15, -9);                                 // neutral mouth slit
+    ctx.lineTo(16, -6);                                 // lower lip
+    ctx.lineTo(15, -4);                                 // chin indentation
+    ctx.bezierCurveTo(16, 0, 14, 3, 10, 3);             // firm square chin
+    ctx.lineTo(0, 0);                                   // jawline
+    ctx.lineTo(-9, -4);                                 // neck
+    ctx.closePath();
+    ctx.fill();
+
+    // Subtle 1971 side-part negative space line
+    ctx.strokeStyle = CONFIG.colors.cutout;
+    ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    ctx.moveTo(-6, -34);
+    ctx.quadraticCurveTo(2, -37, 12, -31);
+    ctx.stroke();
+
+    // Clean hair sideburn / ear notch contour
+    ctx.beginPath();
+    ctx.moveTo(3, -18);
+    ctx.lineTo(3, -8);
+    ctx.quadraticCurveTo(0, -6, -2, -10);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  /**
+   * Professional 1971 Airline Agent Head Profile
+   */
+  function drawAgentHead(ctx, facing = -1) {
+    ctx.save();
+    ctx.scale(facing, 1);
+    ctx.fillStyle = CONFIG.colors.red;
+
+    ctx.beginPath();
+    ctx.moveTo(-8, -4);                                 // nape
+    ctx.bezierCurveTo(-18, -8, -20, -28, -10, -38);     // back of neck to hair bun/updo
+    ctx.bezierCurveTo(-4, -46, 8, -46, 14, -36);        // crown of hairstyle
+    ctx.bezierCurveTo(17, -30, 16, -24, 15, -18);       // forehead
+    ctx.lineTo(19.5, -15);                              // refined nose
+    ctx.lineTo(15.5, -12);                              // under nose
+    ctx.lineTo(16, -10);                                // lips
+    ctx.lineTo(14, -9);
+    ctx.lineTo(15, -6);
+    ctx.lineTo(13, -3);                                 // chin
+    ctx.bezierCurveTo(13, 0, 10, 2, 7, 2);
+    ctx.lineTo(0, 0);                                   // jawline
+    ctx.closePath();
+    ctx.fill();
+
+    // Hair contour in negative space
+    ctx.strokeStyle = CONFIG.colors.cutout;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(-6, -32);
+    ctx.quadraticCurveTo(2, -35, 11, -28);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  // =========================================================================
   // CHARACTER SILHOUETTES
   // =========================================================================
 
   /**
-   * Draws the Middle-Aged Man silhouette.
-   * True profile/three-quarter view of a 1971 businessman:
-   * - Tailored two-piece suit with curved back, chest profile, wide lapels
-   * - Negative space white shirt collar cutout & sleek necktie
-   * - Mature head profile: clean brow, straight nose, firm chin, side-parted hair
-   * - Classic straight trousers over low-heel dress shoes
-   * - Hard-shell 1971 attache briefcase held in right hand with physics inertia
-   * - Left arm swinging in natural counter-motion or reaching forward across counter
+   * Draws the Full Middle-Aged Man silhouette standing or walking.
    */
   function drawManSilhouette(ctx, options = {}) {
     const {
@@ -331,7 +407,7 @@
     ctx.lineTo(-16, 16);
     ctx.stroke();
 
-    // --- 4. MATURE BUSINESSMAN HEAD IN PROFILE ---
+    // --- 4. MATURE BUSINESSMAN HEAD ---
     // Neck
     ctx.fillStyle = red;
     ctx.beginPath();
@@ -350,32 +426,11 @@
     ctx.lineTo(8, -73);
     ctx.stroke();
 
-    // Clean, confident, iconic mid-century silhouette head:
-    ctx.beginPath();
-    ctx.moveTo(-7, -84);                               // nape
-    ctx.bezierCurveTo(-18, -88, -19, -108, -6, -115); // occiput to crown
-    ctx.bezierCurveTo(4, -117, 13, -114, 14, -104);   // crown to forehead
-    ctx.lineTo(14, -98);                              // forehead
-    ctx.lineTo(19, -94);                              // nose
-    ctx.lineTo(15, -91);                              // under nose
-    ctx.lineTo(15.5, -88);                            // lips
-    ctx.lineTo(14, -85);                              // chin
-    ctx.lineTo(4, -83);                               // jawline
-    ctx.closePath();
-    ctx.fill();
-
-    // 1971 side-parted hair line in negative space
-    ctx.strokeStyle = cutout;
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(-7, -106);
-    ctx.quadraticCurveTo(1, -108, 11, -103);
-    ctx.stroke();
-
-    // Ear contour
-    ctx.beginPath();
-    ctx.arc(-1, -94, 3.5, -Math.PI * 0.45, Math.PI * 0.55);
-    ctx.stroke();
+    // Head profile
+    ctx.save();
+    ctx.translate(0, -84);
+    drawDignifiedHead(ctx, 1);
+    ctx.restore();
 
     ctx.restore(); // Torso
 
@@ -468,145 +523,6 @@
 
     ctx.restore(); // Near arm
     ctx.restore(); // Base
-  }
-
-  /**
-   * Draws the Airline Ticket Agent behind the counter.
-   * 1971 airline uniform (collared blazer, neck scarf cutout, neat updo hairstyle).
-   * Positioned on floor level behind ticket desk.
-   */
-  function drawTicketAgent(ctx, options = {}) {
-    const {
-      x = 1320,
-      y = 820,
-      scale = 1.45,
-      action = 'idle', // 'idle', 'greet', 'receive', 'give'
-      actionProgress = 0,
-      facing = -1 // -1: facing left toward passenger
-    } = options;
-
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.scale(scale * Math.abs(facing), scale);
-
-    const red = CONFIG.colors.red;
-    const redBright = CONFIG.colors.redBright;
-    const cutout = CONFIG.colors.cutout;
-
-    // Torso (waist up, authentic 1971 airline blazer)
-    ctx.fillStyle = red;
-    ctx.beginPath();
-    ctx.moveTo(16, 0);
-    ctx.lineTo(-16, 0);
-    ctx.bezierCurveTo(-18, -40, -20, -90, -15, -135); // front shoulder
-    ctx.lineTo(15, -135);                              // back shoulder
-    ctx.bezierCurveTo(18, -90, 18, -40, 16, 0);
-    ctx.closePath();
-    ctx.fill();
-
-    // White collared blouse cutout in negative space
-    ctx.fillStyle = cutout;
-    ctx.beginPath();
-    ctx.moveTo(-9, -135);
-    ctx.lineTo(0, -135);
-    ctx.lineTo(-5, -108);
-    ctx.closePath();
-    ctx.fill();
-
-    // Red airline silk neck scarf knot
-    ctx.fillStyle = redBright;
-    ctx.beginPath();
-    ctx.arc(-5, -112, 4.5, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Neck
-    ctx.fillStyle = red;
-    ctx.fillRect(-7, -150, 14, 16);
-
-    // Blouse collar seam line
-    ctx.strokeStyle = cutout;
-    ctx.lineWidth = 1.3;
-    ctx.beginPath();
-    ctx.moveTo(-8, -136);
-    ctx.lineTo(8, -136);
-    ctx.stroke();
-
-    // Head in Profile facing left toward the passenger
-    ctx.beginPath();
-    ctx.moveTo(6, -150);                               // back of neck
-    ctx.bezierCurveTo(17, -154, 18, -178, 6, -184);    // 1971 updo hair bun
-    ctx.bezierCurveTo(-4, -186, -13, -182, -14, -172); // crown & forehead
-    ctx.lineTo(-14, -166);                            // brow
-    ctx.lineTo(-18, -163);                             // nose
-    ctx.lineTo(-14.5, -160);                           // philtrum
-    ctx.lineTo(-15, -157);                             // lips
-    ctx.lineTo(-13, -154);                             // chin
-    ctx.lineTo(-3, -151);                              // jawline
-    ctx.closePath();
-    ctx.fill();
-
-    // Hair contour
-    ctx.strokeStyle = cutout;
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(6, -174);
-    ctx.quadraticCurveTo(-2, -176, -10, -170);
-    ctx.stroke();
-
-    // Ear
-    ctx.beginPath();
-    ctx.arc(0, -162, 3, -Math.PI * 0.55, Math.PI * 0.45);
-    ctx.stroke();
-
-    // Arms & Hand Positions
-    // Base shoulder pivot at (-15, -132)
-    let armRot = 0.25;
-    if (action === 'receive') {
-      armRot = MathUtils.lerp(0.25, -0.65, MathUtils.clamp(actionProgress, 0, 1));
-    } else if (action === 'give') {
-      armRot = MathUtils.lerp(0.25, -0.75, MathUtils.clamp(actionProgress, 0, 1));
-    }
-
-    ctx.save();
-    ctx.translate(-15, -132);
-    ctx.rotate(armRot);
-
-    // Upper arm
-    ctx.fillStyle = red;
-    ctx.beginPath();
-    ctx.roundRect(-5.5, 0, 11, 46, 4);
-    ctx.fill();
-
-    // Forearm
-    ctx.translate(0, 44);
-    ctx.beginPath();
-    ctx.roundRect(-4.5, 0, 9, 44, 3);
-    ctx.fill();
-
-    // Hand
-    ctx.translate(0, 42);
-    ctx.beginPath();
-    ctx.arc(0, 4, 5, 0, Math.PI * 2);
-    ctx.fill();
-
-    // If sliding ticket envelope in hand
-    if (action === 'give' && actionProgress > 0.3) {
-      ctx.save();
-      ctx.translate(-14, -4);
-      ctx.rotate(-0.2);
-      ctx.fillStyle = cutout;
-      ctx.fillRect(-20, -6, 40, 18);
-      ctx.strokeStyle = redBright;
-      ctx.lineWidth = 1.8;
-      ctx.strokeRect(-20, -6, 40, 18);
-      ctx.fillStyle = redBright;
-      ctx.fillRect(-16, -2, 16, 2.5);
-      ctx.fillRect(-16, 3, 26, 2.5);
-      ctx.restore();
-    }
-
-    ctx.restore(); // Arm
-    ctx.restore(); // Root
   }
 
   /**
@@ -853,7 +769,7 @@
     }
 
     // Ceiling linear fluorescent troffers
-    ctx.strokeStyle = CONFIG.colors.redMuted || CONFIG.colors.redDim;
+    ctx.strokeStyle = CONFIG.colors.redDim;
     ctx.lineWidth = 2.5;
     for (let x = -100; x < width + 300; x += 220) {
       ctx.beginPath();
@@ -933,7 +849,7 @@
       }
     }
 
-    // THE MIDDLE-AGED MAN
+    // THE MIDDLE-AGED MAN WALKING
     const manStartX = 180;
     const manEndX = 1060;
     const manX = MathUtils.lerp(manStartX, manEndX, MathUtils.clamp(progress / 0.95, 0, 1));
@@ -1001,8 +917,7 @@
     // 1971 Airline Ticket Counter Architecture
     const counterX = 1120;
     const counterW = 490;
-    // Counter top waist height relative to floorY
-    const counterTopY = floorY - 175; // 645
+    const counterTopY = floorY - 170; // 650
     const counterH = floorY - counterTopY;
 
     // Back wall vintage flight departure board
@@ -1043,17 +958,52 @@
     ctx.textBaseline = 'middle';
     ctx.fillText('PASSENGER SERVICE \u2022 TICKETS', counterX + counterW / 2, counterTopY - 159);
 
-    // 1. AIRLINE TICKET AGENT (Drawn standing on floorY BEHIND the counter)
-    drawTicketAgent(ctx, {
-      x: counterX + 260,
-      y: floorY,
-      scale: 1.45,
-      action: progress > 0.6 ? 'greet' : 'idle',
-      actionProgress: 0,
-      facing: -1
-    });
+    // 1. AIRLINE TICKET AGENT (Drawn standing behind counter, fully visible above counter)
+    const agentX = counterX + 250;
+    const agentShoulderY = counterTopY - 95;
 
-    // 2. COUNTER DESK (Solid black fill in front of agent to occlude lower body)
+    ctx.save();
+    ctx.translate(agentX, agentShoulderY);
+
+    // Agent Upper Torso & Blazer
+    ctx.fillStyle = CONFIG.colors.red;
+    ctx.beginPath();
+    ctx.moveTo(-18, 0);  // front shoulder
+    ctx.lineTo(18, 0);   // back shoulder
+    ctx.bezierCurveTo(22, 35, 20, 80, 16, 140);
+    ctx.lineTo(-16, 140);
+    ctx.bezierCurveTo(-20, 80, -22, 35, -18, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // White blouse cutout
+    ctx.fillStyle = CONFIG.colors.cutout;
+    ctx.beginPath();
+    ctx.moveTo(-12, 0);
+    ctx.lineTo(-2, 0);
+    ctx.lineTo(-7, 30);
+    ctx.closePath();
+    ctx.fill();
+
+    // Red airline scarf
+    ctx.fillStyle = CONFIG.colors.redBright;
+    ctx.beginPath();
+    ctx.arc(-7, 26, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Neck
+    ctx.fillStyle = CONFIG.colors.red;
+    ctx.fillRect(-8, -18, 14, 20);
+
+    // Head
+    ctx.save();
+    ctx.translate(-1, -18);
+    drawAgentHead(ctx, 1); // facing left
+    ctx.restore();
+
+    ctx.restore(); // Agent
+
+    // 2. COUNTER DESK (Solid black fill to occlude agent lower body)
     ctx.fillStyle = CONFIG.colors.bg;
     ctx.fillRect(counterX, counterTopY, counterW, counterH);
 
@@ -1120,10 +1070,10 @@
   function scene_purchase_ticket(ctx, width, height, t, progress, camera) {
     ctx.save();
 
-    // Medium shot framing focusing on the counter transaction
+    // Intimate medium two-shot framing focusing on the counter transaction
     // Smooth camera push-in toward the counter transaction
-    const camZoom = MathUtils.lerp(1.30, 1.48, MathUtils.easeInOutQuad(progress));
-    const camPanY = MathUtils.lerp(15, -10, progress);
+    const camZoom = MathUtils.lerp(1.36, 1.55, MathUtils.easeInOutQuad(progress));
+    const camPanY = MathUtils.lerp(20, -10, progress);
 
     ctx.translate(width / 2, height / 2);
     ctx.scale(camZoom, camZoom);
@@ -1133,10 +1083,9 @@
     ctx.fillRect(0, 0, width, height);
 
     const floorY = 880;
-    const counterTopY = floorY - 175; // 705
-    const counterY = counterTopY + 14;
-    const counterLeft = 700;
-    const counterRight = 1440;
+    const counterTopY = 660; // waist height
+    const counterLeft = 710;
+    const counterRight = 1210;
     const counterW = counterRight - counterLeft;
 
     // Background horizontal divider lines
@@ -1152,126 +1101,264 @@
     // Flight NW 305 Board in background
     ctx.strokeStyle = CONFIG.colors.redFaint;
     ctx.lineWidth = 1.5;
-    ctx.strokeRect(740, 220, 520, 95);
+    ctx.strokeRect(700, 220, 520, 95);
     ctx.font = `bold 16px ${CONFIG.fonts.mono}`;
     ctx.fillStyle = CONFIG.colors.redDim;
-    ctx.fillText('NW 305   PORTLAND -> SEATTLE   14:50', 770, 258);
-    ctx.fillText('STATUS: BOARDING ON TIME       GATE 4', 770, 290);
+    ctx.fillText('NW 305   PORTLAND -> SEATTLE   14:50', 730, 258);
+    ctx.fillText('STATUS: ON TIME    BOARDING    GATE 4', 730, 290);
 
-    // TRANSACTION PHASES:
-    // Phase 1 (0.0 -> 0.35): Man hands over cash payment ($20 bill fold)
-    // Phase 2 (0.35 -> 0.70): Agent validates and slides ticket envelope across counter
-    // Phase 3 (0.70 -> 1.00): Man reaches forward and takes the ticket
-    const p1 = MathUtils.clamp(progress / 0.35, 0, 1);
-    const p2 = MathUtils.clamp((progress - 0.35) / 0.35, 0, 1);
-    const p3 = MathUtils.clamp((progress - 0.70) / 0.30, 0, 1);
+    // 1. TICKET AGENT (standing on floorY behind counter, framed on right)
+    const agentX = 1140;
+    const agentShoulderY = counterTopY - 110;
 
-    let agentAct = 'idle';
-    let agentProg = 0;
-    if (progress < 0.35) {
-      agentAct = 'receive';
-      agentProg = p1;
-    } else if (progress < 0.70) {
-      agentAct = 'give';
-      agentProg = p2;
-    } else {
-      agentAct = 'give';
-      agentProg = 1.0;
-    }
+    ctx.save();
+    ctx.translate(agentX, agentShoulderY);
 
-    // 1. TICKET AGENT (standing on floorY behind counter)
-    drawTicketAgent(ctx, {
-      x: 1330,
-      y: floorY,
-      scale: 1.45,
-      action: agentAct,
-      actionProgress: agentProg,
-      facing: -1
-    });
+    // Upper Torso / Blazer
+    ctx.fillStyle = CONFIG.colors.red;
+    ctx.beginPath();
+    ctx.moveTo(-22, 0);  // front shoulder
+    ctx.lineTo(22, 0);   // back shoulder
+    ctx.bezierCurveTo(26, 40, 24, 90, 20, 160);
+    ctx.lineTo(-20, 160);
+    ctx.bezierCurveTo(-24, 90, -26, 40, -22, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // White blouse cutout
+    ctx.fillStyle = CONFIG.colors.cutout;
+    ctx.beginPath();
+    ctx.moveTo(-14, 0);
+    ctx.lineTo(-2, 0);
+    ctx.lineTo(-8, 36);
+    ctx.closePath();
+    ctx.fill();
+
+    // Red airline scarf
+    ctx.fillStyle = CONFIG.colors.redBright;
+    ctx.beginPath();
+    ctx.arc(-8, 30, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Neck
+    ctx.fillStyle = CONFIG.colors.red;
+    ctx.fillRect(-9, -20, 16, 22);
+
+    // Head
+    ctx.save();
+    ctx.translate(-1, -20);
+    drawAgentHead(ctx, 1); // facing left
+    ctx.restore();
+
+    ctx.restore(); // Agent Upper Body
 
     // 2. COUNTER DESK (Solid black fill in front of agent to occlude lower body)
     ctx.fillStyle = CONFIG.colors.bg;
-    ctx.fillRect(counterLeft, counterY, counterW, floorY - counterY + 20);
+    ctx.fillRect(counterLeft, counterTopY, counterW, floorY - counterTopY + 20);
 
     ctx.strokeStyle = CONFIG.colors.red;
     ctx.lineWidth = 3.0;
-    ctx.strokeRect(counterLeft, counterY, counterW, floorY - counterY + 20);
+    ctx.strokeRect(counterLeft, counterTopY, counterW, floorY - counterTopY + 20);
 
-    // Counter Top Surface
+    // Counter Top Shelf
     ctx.fillStyle = CONFIG.colors.red;
-    ctx.fillRect(counterLeft - 40, counterTopY, counterW + 60, 16);
+    ctx.fillRect(counterLeft - 30, counterTopY - 14, counterW + 50, 16);
 
     // 1971 Ticket Validator / Stamp Machine outline on desk
     ctx.strokeStyle = CONFIG.colors.redDim;
     ctx.lineWidth = 2.0;
-    ctx.strokeRect(counterLeft + counterW - 180, counterTopY - 35, 55, 32);
+    ctx.strokeRect(counterRight - 120, counterTopY - 38, 50, 24);
 
-    // 3. THE MIDDLE-AGED MAN
-    const manArmReach = (progress < 0.35)
-      ? MathUtils.easeOutQuad(p1)
-      : (progress < 0.70)
-        ? 0.45
-        : MathUtils.lerp(0.45, 0.95, MathUtils.easeOutQuad(p3));
+    // 3. THE MIDDLE-AGED MAN (Framed on left, facing right)
+    const manX = 780;
+    const manShoulderY = counterTopY - 110;
 
-    drawManSilhouette(ctx, {
-      x: 580,
-      y: floorY,
-      scale: 1.45,
-      walkPhase: 0,
-      isWalking: false,
-      briefcaseHold: true,
-      armReachProgress: manArmReach,
-      facing: 1
-    });
+    ctx.save();
+    ctx.translate(manX, manShoulderY);
 
-    // 4. TRANSACTION ITEMS (Folded Money / Airline Ticket)
+    // Torso / Suit Jacket
+    ctx.fillStyle = CONFIG.colors.red;
+    ctx.beginPath();
+    ctx.moveTo(22, 0);   // front shoulder
+    ctx.lineTo(-22, 0);  // back shoulder
+    ctx.bezierCurveTo(-26, 40, -24, 90, -20, 160);
+    ctx.lineTo(20, 160);
+    ctx.bezierCurveTo(24, 90, 26, 40, 22, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // White shirt collar cutout
+    ctx.fillStyle = CONFIG.colors.cutout;
+    ctx.beginPath();
+    ctx.moveTo(2, 0);
+    ctx.lineTo(14, 0);
+    ctx.lineTo(8, 36);
+    ctx.closePath();
+    ctx.fill();
+
+    // Red necktie
+    ctx.fillStyle = CONFIG.colors.redBright;
+    ctx.beginPath();
+    ctx.moveTo(6, 4);
+    ctx.lineTo(10, 4);
+    ctx.lineTo(9, 32);
+    ctx.lineTo(7, 32);
+    ctx.closePath();
+    ctx.fill();
+
+    // Lapel seam
+    ctx.strokeStyle = CONFIG.colors.cutout;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(15, 2);
+    ctx.lineTo(10, 36);
+    ctx.lineTo(5, 70);
+    ctx.stroke();
+
+    // Neck
+    ctx.fillStyle = CONFIG.colors.red;
+    ctx.fillRect(-7, -20, 16, 22);
+
+    // Head
+    ctx.save();
+    ctx.translate(1, -20);
+    drawDignifiedHead(ctx, 1); // facing right
+    ctx.restore();
+
+    // Right arm holding briefcase down at side
+    ctx.save();
+    ctx.translate(-14, 10);
+    ctx.fillStyle = CONFIG.colors.red;
+    ctx.beginPath();
+    ctx.roundRect(-6, 0, 12, 54, 4);
+    ctx.fill();
+
+    // Forearm & Briefcase
+    ctx.translate(0, 52);
+    ctx.beginPath();
+    ctx.roundRect(-5, 0, 10, 48, 3);
+    ctx.fill();
+
+    ctx.translate(1, 48);
+    // Handle
+    ctx.strokeStyle = CONFIG.colors.red;
+    ctx.lineWidth = 3.2;
+    ctx.beginPath();
+    ctx.arc(0, -6, 7, Math.PI, 0, false);
+    ctx.stroke();
+
+    // Briefcase Body
+    const bw = 54;
+    const bh = 36;
+    ctx.fillStyle = CONFIG.colors.red;
+    ctx.beginPath();
+    ctx.roundRect(-bw / 2, 0, bw, bh, 3);
+    ctx.fill();
+
+    ctx.strokeStyle = CONFIG.colors.cutout;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(-bw / 2 + 1, bh / 2);
+    ctx.lineTo(bw / 2 - 1, bh / 2);
+    ctx.stroke();
+    ctx.restore(); // Briefcase
+
+    ctx.restore(); // Man Upper Body
+
+    // 4. TRANSACTION DYNAMICS ACROSS THE COUNTER
+    // Phases:
+    // p1 (0.0 to 0.35): Man hands over cash payment ($20 bill fold)
+    // p2 (0.35 to 0.70): Agent validates and slides ticket envelope across counter
+    // p3 (0.70 to 1.00): Man reaches forward and takes the ticket
+    const p1 = MathUtils.clamp(progress / 0.35, 0, 1);
+    const p2 = MathUtils.clamp((progress - 0.35) / 0.35, 0, 1);
+    const p3 = MathUtils.clamp((progress - 0.70) / 0.30, 0, 1);
+
+    // Man's reaching arm (front arm)
+    const manArmT = progress < 0.35 ? p1 : progress < 0.70 ? 0.45 : 0.45 + p3 * 0.55;
+    const manHandX = 800 + manArmT * 135;
+    const manHandY = counterTopY - 14;
+
+    ctx.save();
+    ctx.fillStyle = CONFIG.colors.red;
+    ctx.beginPath();
+    ctx.moveTo(manX + 18, manShoulderY + 8);
+    ctx.lineTo(manX + 8, manShoulderY + 8);
+    ctx.lineTo(manHandX - 8, manHandY);
+    ctx.lineTo(manHandX + 8, manHandY);
+    ctx.closePath();
+    ctx.fill();
+
+    // White shirt cuff slit
+    ctx.strokeStyle = CONFIG.colors.cutout;
+    ctx.lineWidth = 2.0;
+    ctx.beginPath();
+    ctx.moveTo(manHandX - 12, manHandY - 4);
+    ctx.lineTo(manHandX - 12, manHandY + 4);
+    ctx.stroke();
+
+    // Man hand
+    ctx.beginPath();
+    ctx.arc(manHandX, manHandY, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Agent's reaching arm
+    const agentArmT = progress < 0.35 ? p1 * 0.7 : progress < 0.70 ? 0.7 + p2 * 0.3 : 1.0 - p3 * 0.4;
+    const agentHandX = 1120 - agentArmT * 130;
+    const agentHandY = counterTopY - 14;
+
+    ctx.save();
+    ctx.fillStyle = CONFIG.colors.red;
+    ctx.beginPath();
+    ctx.moveTo(agentX - 18, agentShoulderY + 8);
+    ctx.lineTo(agentX - 8, agentShoulderY + 8);
+    ctx.lineTo(agentHandX + 8, agentHandY);
+    ctx.lineTo(agentHandX - 8, agentHandY);
+    ctx.closePath();
+    ctx.fill();
+
+    // Agent hand
+    ctx.beginPath();
+    ctx.arc(agentHandX, agentHandY, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Transaction items on counter:
     if (progress < 0.35) {
-      // Payment (folded currency) handed over by man
-      const billX = MathUtils.lerp(740, 890, MathUtils.easeOutQuad(p1));
-      const billY = MathUtils.lerp(counterTopY - 25, counterTopY - 12, p1);
+      // Folded cash payment ($20 bill fold)
+      const billX = manHandX + 14;
+      const billY = counterTopY - 14;
       ctx.save();
       ctx.fillStyle = CONFIG.colors.redBright;
-      ctx.fillRect(billX - 16, billY - 7, 32, 14);
+      ctx.fillRect(billX - 14, billY - 7, 28, 14);
       ctx.strokeStyle = CONFIG.colors.cutout;
       ctx.lineWidth = 1.2;
-      ctx.strokeRect(billX - 16, billY - 7, 32, 14);
+      ctx.strokeRect(billX - 14, billY - 7, 28, 14);
       ctx.restore();
     } else {
-      // Ticket envelope sliding across counter and being picked up
-      const ticketStartX = counterLeft + counterW - 220; // 1220 (near agent)
-      const ticketMidX = 960; // center of counter
-      const ticketEndX = 860; // near man's hand
-
-      const ticketX = (progress < 0.70)
-        ? MathUtils.lerp(ticketStartX, ticketMidX, MathUtils.easeInOutQuad(p2))
-        : MathUtils.lerp(ticketMidX, ticketEndX, MathUtils.easeOutQuad(p3));
-
-      const ticketY = (progress < 0.85)
-        ? counterTopY - 14
-        : MathUtils.lerp(counterTopY - 14, counterTopY - 30, MathUtils.easeOutQuad((progress - 0.85) / 0.15));
-
-      const ticketRot = (progress < 0.85) ? 0 : -0.14 * ((progress - 0.85) / 0.15);
+      // Red ticket envelope sliding across counter and being picked up
+      const ticketX = progress < 0.70
+        ? 1030 - p2 * 90
+        : 940 - p3 * 30;
+      const ticketY = counterTopY - 16;
 
       ctx.save();
       ctx.translate(ticketX, ticketY);
-      ctx.rotate(ticketRot);
 
-      // Red ticket envelope
-      ctx.fillStyle = CONFIG.colors.bg;
-      ctx.fillRect(-38, -12, 76, 24);
+      ctx.fillStyle = CONFIG.colors.cutout;
+      ctx.fillRect(-32, -10, 64, 20);
       ctx.strokeStyle = CONFIG.colors.redBright;
-      ctx.lineWidth = 2.4;
-      ctx.strokeRect(-38, -12, 76, 24);
+      ctx.lineWidth = 2.2;
+      ctx.strokeRect(-32, -10, 64, 20);
 
-      // Typography lines
       ctx.fillStyle = CONFIG.colors.redBright;
-      ctx.fillRect(-30, -6, 28, 3);
-      ctx.fillRect(-30, 0, 50, 3);
-      ctx.fillRect(-30, 6, 36, 2);
+      ctx.fillRect(-26, -5, 24, 2.5);
+      ctx.fillRect(-26, 0, 42, 2.5);
+      ctx.fillRect(-26, 4, 30, 2);
 
-      // Ticket "SEATTLE" tag in miniature
-      ctx.font = `bold 8px ${CONFIG.fonts.mono}`;
-      ctx.fillText('SEATTLE', 6, -3);
+      ctx.font = `bold 7.5px ${CONFIG.fonts.mono}`;
+      ctx.fillText('SEATTLE', 6, -2);
 
       ctx.restore();
     }
@@ -1542,6 +1629,8 @@
     scene_purchase_ticket,
     scene_ticket_closeup,
     drawManSilhouette,
+    drawDignifiedHead,
+    drawAgentHead,
     drawTicketAgent
   };
 });
