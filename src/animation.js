@@ -504,54 +504,126 @@
 
   /**
    * Draws the Airline Ticket Agent behind the counter.
-   * 1971 airline uniform (collared blazer, neck scarf cutout, neat updo hairstyle).
+   * 1971 airline uniform (collared blazer, white blouse cutout, red neck scarf, articulated arms).
    */
   function drawTicketAgent(ctx, options = {}) {
     const {
       x = 1140,
       y = 550,
-      scale = 1.0,
-      facing = -1
+      scale = 1.45,
+      facing = -1,
+      reachProgress = 0
     } = options;
 
     ctx.save();
     ctx.translate(x, y);
     ctx.scale(scale * (facing < 0 ? 1 : -1), scale);
 
-    // Upper Torso / Blazer
-    ctx.fillStyle = CONFIG.colors.red;
+    const red = CONFIG.colors.red;
+    const redBright = CONFIG.colors.redBright;
+    const redDeep = CONFIG.colors.redDeep;
+    const cutout = CONFIG.colors.cutout;
+
+    // 1. Back Arm (resting politely at side/desk)
+    ctx.save();
+    ctx.translate(15, 6);
+    ctx.fillStyle = redDeep;
+    // Bicep
     ctx.beginPath();
-    ctx.moveTo(-22, 0);  // front shoulder
-    ctx.lineTo(22, 0);   // back shoulder
-    ctx.bezierCurveTo(26, 40, 24, 90, 20, 160);
-    ctx.lineTo(-20, 160);
-    ctx.bezierCurveTo(-24, 90, -26, 40, -22, 0);
+    ctx.roundRect(-5, 0, 10, 42, 4);
+    ctx.fill();
+    // Forearm
+    ctx.translate(0, 38);
+    ctx.rotate(-0.25);
+    ctx.beginPath();
+    ctx.roundRect(-4, 0, 8, 38, 3);
+    ctx.fill();
+    // Hand
+    ctx.translate(0, 36);
+    ctx.beginPath();
+    ctx.arc(0, 3, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // 2. Upper Torso / Blazer
+    ctx.fillStyle = red;
+    ctx.beginPath();
+    ctx.moveTo(-20, 0);  // front shoulder
+    ctx.lineTo(20, 0);   // back shoulder
+    ctx.bezierCurveTo(24, 35, 22, 75, 18, 120);
+    ctx.lineTo(-18, 120);
+    ctx.bezierCurveTo(-22, 75, -24, 35, -20, 0);
     ctx.closePath();
     ctx.fill();
 
-    // White blouse cutout
-    ctx.fillStyle = CONFIG.colors.cutout;
+    // White blouse cutout in negative space
+    ctx.fillStyle = cutout;
     ctx.beginPath();
-    ctx.moveTo(-14, 0);
+    ctx.moveTo(-13, 0);
     ctx.lineTo(-2, 0);
-    ctx.lineTo(-8, 36);
+    ctx.lineTo(-7, 32);
     ctx.closePath();
     ctx.fill();
 
     // Red airline scarf
-    ctx.fillStyle = CONFIG.colors.redBright;
+    ctx.fillStyle = redBright;
     ctx.beginPath();
-    ctx.arc(-8, 30, 4.5, 0, Math.PI * 2);
+    ctx.arc(-7, 27, 4.2, 0, Math.PI * 2);
     ctx.fill();
 
-    // Neck
-    ctx.fillStyle = CONFIG.colors.red;
-    ctx.fillRect(-9, -20, 16, 22);
+    // Tapered neck
+    ctx.fillStyle = red;
+    ctx.beginPath();
+    ctx.moveTo(-7, 0);
+    ctx.lineTo(-6, -18);
+    ctx.lineTo(6, -18);
+    ctx.lineTo(7, 0);
+    ctx.closePath();
+    ctx.fill();
 
     // Head
     ctx.save();
-    ctx.translate(-1, -20);
+    ctx.translate(-1, -18);
     drawAgentHead(ctx, 1);
+    ctx.restore();
+
+    // 3. Front Arm (gesturing / resting forward on desk)
+    ctx.save();
+    ctx.translate(-15, 6);
+    ctx.fillStyle = red;
+    // Bicep
+    ctx.beginPath();
+    ctx.roundRect(-5, 0, 10, 42, 4);
+    ctx.fill();
+
+    // Sleeve seam
+    ctx.strokeStyle = cutout;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(-5, 4);
+    ctx.lineTo(-5, 36);
+    ctx.stroke();
+
+    // Forearm
+    ctx.translate(0, 38);
+    ctx.rotate(0.38 + reachProgress * 0.35);
+    ctx.beginPath();
+    ctx.roundRect(-4, 0, 8, 38, 3);
+    ctx.fill();
+
+    // White blouse cuff
+    ctx.strokeStyle = cutout;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(-4, 32);
+    ctx.lineTo(4, 32);
+    ctx.stroke();
+
+    // Hand
+    ctx.translate(0, 36);
+    ctx.beginPath();
+    ctx.arc(0, 3, 4.5, 0, Math.PI * 2);
+    ctx.fill();
     ctx.restore();
 
     ctx.restore();
@@ -990,50 +1062,16 @@
     ctx.textBaseline = 'middle';
     ctx.fillText('PASSENGER SERVICE \u2022 TICKETS', counterX + counterW / 2, counterTopY - 159);
 
-    // 1. AIRLINE TICKET AGENT (Drawn standing behind counter, fully visible above counter)
-    const agentX = counterX + 250;
-    const agentShoulderY = counterTopY - 95;
+    // 1. AIRLINE TICKET AGENT (Standing behind counter, matching the man's scale and eye level)
+    const agentX = counterX + 260;
+    const agentShoulderY = counterTopY - 90;
 
-    ctx.save();
-    ctx.translate(agentX, agentShoulderY);
-
-    // Agent Upper Torso & Blazer
-    ctx.fillStyle = CONFIG.colors.red;
-    ctx.beginPath();
-    ctx.moveTo(-18, 0);  // front shoulder
-    ctx.lineTo(18, 0);   // back shoulder
-    ctx.bezierCurveTo(22, 35, 20, 80, 16, 140);
-    ctx.lineTo(-16, 140);
-    ctx.bezierCurveTo(-20, 80, -22, 35, -18, 0);
-    ctx.closePath();
-    ctx.fill();
-
-    // White blouse cutout
-    ctx.fillStyle = CONFIG.colors.cutout;
-    ctx.beginPath();
-    ctx.moveTo(-12, 0);
-    ctx.lineTo(-2, 0);
-    ctx.lineTo(-7, 30);
-    ctx.closePath();
-    ctx.fill();
-
-    // Red airline scarf
-    ctx.fillStyle = CONFIG.colors.redBright;
-    ctx.beginPath();
-    ctx.arc(-7, 26, 4, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Neck
-    ctx.fillStyle = CONFIG.colors.red;
-    ctx.fillRect(-8, -18, 14, 20);
-
-    // Head
-    ctx.save();
-    ctx.translate(-1, -18);
-    drawAgentHead(ctx, 1); // facing left
-    ctx.restore();
-
-    ctx.restore(); // Agent
+    drawTicketAgent(ctx, {
+      x: agentX,
+      y: agentShoulderY,
+      scale: 1.45,
+      facing: -1
+    });
 
     // 2. COUNTER DESK (Solid black fill to occlude agent lower body)
     ctx.fillStyle = CONFIG.colors.bg;
@@ -1146,6 +1184,20 @@
     ctx.save();
     ctx.translate(agentX, agentShoulderY);
 
+    // Agent Back Arm (resting politely on desk)
+    ctx.save();
+    ctx.translate(16, 6);
+    ctx.fillStyle = CONFIG.colors.redDeep;
+    ctx.beginPath();
+    ctx.roundRect(-5, 0, 10, 42, 4);
+    ctx.fill();
+    ctx.translate(0, 38);
+    ctx.rotate(-0.25);
+    ctx.beginPath();
+    ctx.roundRect(-4, 0, 8, 38, 3);
+    ctx.fill();
+    ctx.restore();
+
     // Upper Torso / Blazer
     ctx.fillStyle = CONFIG.colors.red;
     ctx.beginPath();
@@ -1172,13 +1224,19 @@
     ctx.arc(-8, 30, 4.5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Neck
+    // Tapered Neck
     ctx.fillStyle = CONFIG.colors.red;
-    ctx.fillRect(-9, -20, 16, 22);
+    ctx.beginPath();
+    ctx.moveTo(-7, 0);
+    ctx.lineTo(-6, -18);
+    ctx.lineTo(6, -18);
+    ctx.lineTo(7, 0);
+    ctx.closePath();
+    ctx.fill();
 
     // Head
     ctx.save();
-    ctx.translate(-1, -20);
+    ctx.translate(-1, -18);
     drawAgentHead(ctx, 1); // facing left
     ctx.restore();
 
@@ -1247,13 +1305,27 @@
     ctx.lineTo(5, 70);
     ctx.stroke();
 
-    // Neck
+    // Tapered Neck
     ctx.fillStyle = CONFIG.colors.red;
-    ctx.fillRect(-7, -20, 16, 22);
+    ctx.beginPath();
+    ctx.moveTo(-7, 0);
+    ctx.lineTo(-6, -18);
+    ctx.lineTo(6, -18);
+    ctx.lineTo(7, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // Shirt collar ring in negative space
+    ctx.strokeStyle = CONFIG.colors.cutout;
+    ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    ctx.moveTo(-6, -1);
+    ctx.lineTo(7, -1);
+    ctx.stroke();
 
     // Head
     ctx.save();
-    ctx.translate(1, -20);
+    ctx.translate(1, -18);
     drawDignifiedHead(ctx, 1); // facing right
     ctx.restore();
 
@@ -1306,64 +1378,88 @@
     const p2 = MathUtils.clamp((progress - 0.35) / 0.35, 0, 1);
     const p3 = MathUtils.clamp((progress - 0.70) / 0.30, 0, 1);
 
-    // Man's reaching arm with articulated elbow
+    // Man's reaching arm with natural articulated elbow bend
     const manArmT = progress < 0.35 ? p1 : progress < 0.70 ? 0.45 : 0.45 + p3 * 0.55;
-    const manHandX = 820 + manArmT * 125;
+    const manHandX = 845 + manArmT * 85;
     const manHandY = counterTopY - 14;
-    const manElbowX = manX + 16;
-    const manElbowY = manShoulderY + 44;
+    const manElbowX = manX + 36 + manArmT * 20;
+    const manElbowY = manShoulderY + 54 + manArmT * 8;
 
     ctx.save();
     ctx.fillStyle = CONFIG.colors.red;
     ctx.strokeStyle = CONFIG.colors.red;
-    ctx.lineWidth = 10;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
+    // Upper arm sleeve
+    ctx.lineWidth = 14;
     ctx.beginPath();
-    ctx.moveTo(manX + 14, manShoulderY + 6);
+    ctx.moveTo(manX + 16, manShoulderY + 8);
     ctx.lineTo(manElbowX, manElbowY);
-    ctx.lineTo(manHandX, manHandY);
+    ctx.stroke();
+
+    // Forearm sleeve
+    ctx.lineWidth = 11;
+    ctx.beginPath();
+    ctx.moveTo(manElbowX, manElbowY);
+    ctx.lineTo(manHandX - 8, manHandY - 4);
     ctx.stroke();
 
     // White shirt cuff slit
     ctx.strokeStyle = CONFIG.colors.cutout;
     ctx.lineWidth = 2.0;
     ctx.beginPath();
-    ctx.moveTo(manHandX - 10, manHandY - 4);
-    ctx.lineTo(manHandX - 10, manHandY + 4);
+    ctx.moveTo(manHandX - 8, manHandY - 9);
+    ctx.lineTo(manHandX - 8, manHandY + 1);
     ctx.stroke();
 
     // Man Hand
     ctx.beginPath();
-    ctx.arc(manHandX, manHandY, 6.5, 0, Math.PI * 2);
+    ctx.arc(manHandX, manHandY - 4, 6, 0, Math.PI * 2);
     ctx.fill();
+    ctx.fillRect(manHandX - 2, manHandY - 7, 9, 5);
     ctx.restore();
 
-    // Agent's reaching arm with articulated elbow
-    const agentArmT = progress < 0.35 ? p1 * 0.7 : progress < 0.70 ? 0.7 + p2 * 0.3 : 1.0 - p3 * 0.4;
-    const agentHandX = 1100 - agentArmT * 115;
+    // Agent's reaching arm with natural articulated elbow bend
+    const agentArmT = progress < 0.35 ? p1 * 0.65 : progress < 0.70 ? 0.65 + p2 * 0.35 : 1.0 - p3 * 0.45;
+    const agentHandX = 1070 - agentArmT * 85;
     const agentHandY = counterTopY - 14;
-    const agentElbowX = agentX - 24;
-    const agentElbowY = agentShoulderY + 44;
+    const agentElbowX = agentX - 36 - agentArmT * 20;
+    const agentElbowY = agentShoulderY + 54 + agentArmT * 8;
 
     ctx.save();
     ctx.fillStyle = CONFIG.colors.red;
     ctx.strokeStyle = CONFIG.colors.red;
-    ctx.lineWidth = 10;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
+    // Upper arm sleeve
+    ctx.lineWidth = 13;
     ctx.beginPath();
-    ctx.moveTo(agentX - 14, agentShoulderY + 6);
+    ctx.moveTo(agentX - 16, agentShoulderY + 8);
     ctx.lineTo(agentElbowX, agentElbowY);
-    ctx.lineTo(agentHandX, agentHandY);
+    ctx.stroke();
+
+    // Forearm sleeve
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.moveTo(agentElbowX, agentElbowY);
+    ctx.lineTo(agentHandX + 8, agentHandY - 4);
+    ctx.stroke();
+
+    // White blouse cuff slit
+    ctx.strokeStyle = CONFIG.colors.cutout;
+    ctx.lineWidth = 2.0;
+    ctx.beginPath();
+    ctx.moveTo(agentHandX + 8, agentHandY - 9);
+    ctx.lineTo(agentHandX + 8, agentHandY + 1);
     ctx.stroke();
 
     // Agent Hand
     ctx.beginPath();
-    ctx.arc(agentHandX, agentHandY, 6.5, 0, Math.PI * 2);
+    ctx.arc(agentHandX, agentHandY - 4, 5.5, 0, Math.PI * 2);
     ctx.fill();
+    ctx.fillRect(agentHandX - 7, agentHandY - 7, 9, 5);
     ctx.restore();
 
     // Transaction items on counter:
