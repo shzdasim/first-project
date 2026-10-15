@@ -25,11 +25,11 @@
       bg: '#000000',
       red: '#FF2020',
       redBright: '#FF3B3B',
-      redGlow: '#FF4D4D',
+      redGlow: '#FF5252',
       redDeep: '#B81414',
       redMuted: 'rgba(255, 32, 32, 0.45)',
-      redDim: 'rgba(255, 32, 32, 0.25)',
-      redFaint: 'rgba(255, 32, 32, 0.10)',
+      redDim: 'rgba(255, 32, 32, 0.22)',
+      redFaint: 'rgba(255, 32, 32, 0.09)',
       cutout: '#000000' // pure negative space
     },
     fonts: {
@@ -101,9 +101,9 @@
 
   /**
    * Draws the Middle-Aged Man silhouette.
-   * Tailored 1971 single-breasted suit, negative-space collar cutout, red tie,
-   * 1970s businessman side-parted hairstyle, hard-shell briefcase,
-   * natural walking kinematics or grounded stance.
+   * 1971 classic two-piece dark suit, negative-space collar cutout, red necktie,
+   * short neat side-parted hairstyle, rectangular briefcase,
+   * authentic walking kinematics or stationary posture.
    */
   function drawManSilhouette(ctx, options = {}) {
     const {
@@ -113,7 +113,7 @@
       walkPhase = 0,     // 0 to 1
       isWalking = false,
       briefcaseHold = true,
-      armReachProgress = 0, // 0 to 1 (reaching out over counter)
+      armReachProgress = 0, // 0 to 1 (left arm reaching forward)
       facing = 1         // 1: right, -1: left
     } = options;
 
@@ -139,27 +139,25 @@
 
     if (isWalking) {
       const wAngle = Math.PI * 2 * walkPhase;
-      // Natural walking vertical oscillation (2 rises per cycle)
+      // Natural walking vertical oscillation
       hipBob = -Math.abs(Math.sin(wAngle)) * 6;
-      torsoTilt = Math.sin(wAngle) * 0.025;
+      torsoTilt = Math.sin(wAngle) * 0.022;
 
-      const legStride = 0.38;
-      // Front & back leg alternation
+      const legStride = 0.40;
       leftLegAngle = Math.sin(wAngle) * legStride;
       rightLegAngle = Math.sin(wAngle + Math.PI) * legStride;
 
       // Realistic knee flexion on leg recovery
-      leftKneeAngle = Math.max(0, -Math.sin(wAngle) * 0.50);
-      rightKneeAngle = Math.max(0, -Math.sin(wAngle + Math.PI) * 0.50);
+      leftKneeAngle = Math.max(0, -Math.sin(wAngle) * 0.52);
+      rightKneeAngle = Math.max(0, -Math.sin(wAngle + Math.PI) * 0.52);
 
-      // Free arm (left) swings counter to left leg
-      leftArmAngle = -Math.sin(wAngle) * 0.32;
+      // Left arm (free arm) swings counter to left leg
+      leftArmAngle = -Math.sin(wAngle) * 0.34;
 
-      // Heavy briefcase arm (right) has subtle pendulum swing with inertia
-      rightArmAngle = Math.sin(wAngle) * 0.14;
-      briefcaseTilt = rightArmAngle * 0.7;
+      // Right arm (holding briefcase) has subtle pendulum swing with inertia
+      rightArmAngle = Math.sin(wAngle) * 0.15;
+      briefcaseTilt = rightArmAngle * 0.75;
     } else {
-      // Resting / stationary stance
       hipBob = 0;
       torsoTilt = 0.01;
       leftLegAngle = -0.04;
@@ -173,30 +171,30 @@
 
     ctx.translate(0, hipBob);
 
-    // --- FUNCTION TO DRAW A LEG ---
+    // --- LEGS & SHOES ---
     const drawLeg = (baseAngle, kneeBend, isBackLeg) => {
       ctx.save();
       ctx.translate(0, -120); // Hip socket
       ctx.rotate(baseAngle);
 
-      // Thigh / Upper trouser
+      // Thigh
       ctx.fillStyle = isBackLeg ? redDeep : red;
       ctx.beginPath();
       ctx.moveTo(-11, 0);
       ctx.lineTo(11, 0);
-      ctx.lineTo(8, 64);
-      ctx.lineTo(-8, 64);
+      ctx.lineTo(8.5, 64);
+      ctx.lineTo(-8.5, 64);
       ctx.closePath();
       ctx.fill();
 
-      // Lower leg / Shin & Trousers
+      // Knee & Shin
       ctx.translate(0, 64);
       ctx.rotate(kneeBend);
       ctx.beginPath();
-      ctx.moveTo(-8, 0);
-      ctx.lineTo(8, 0);
-      ctx.lineTo(6.5, 62);
-      ctx.lineTo(-6.5, 62);
+      ctx.moveTo(-8.5, 0);
+      ctx.lineTo(8.5, 0);
+      ctx.lineTo(7, 62);
+      ctx.lineTo(-7, 62);
       ctx.closePath();
       ctx.fill();
 
@@ -212,18 +210,18 @@
       ctx.translate(0, 62);
       ctx.fillStyle = isBackLeg ? redDeep : red;
       ctx.beginPath();
-      ctx.moveTo(-7, 0);
-      ctx.lineTo(7, 0);
-      ctx.lineTo(17, 8);
-      ctx.lineTo(16, 14);
-      ctx.lineTo(-9, 14);
-      ctx.lineTo(-9, 4);
+      ctx.moveTo(-8, 0);
+      ctx.lineTo(8, 0);
+      ctx.lineTo(18, 9);
+      ctx.lineTo(17, 15);
+      ctx.lineTo(-10, 15);
+      ctx.lineTo(-10, 4);
       ctx.closePath();
       ctx.fill();
 
       // Heel notch cutout
       ctx.fillStyle = cutout;
-      ctx.fillRect(-9, 10, 3, 4);
+      ctx.fillRect(-10, 10, 3, 5);
 
       ctx.restore();
     };
@@ -238,7 +236,7 @@
     ctx.translate(0, -120); // Hip
     ctx.rotate(torsoTilt);
 
-    // Jacket skirt (extends down over hips, authentic 1970s cut)
+    // Lower jacket skirt (extends over hips, authentic 1971 cut)
     ctx.fillStyle = red;
     ctx.beginPath();
     ctx.moveTo(-18, -35);
@@ -290,7 +288,7 @@
     ctx.closePath();
     ctx.fill();
 
-    // Suit breast pocket slit welt
+    // Suit breast pocket welt slit
     ctx.strokeStyle = cutout;
     ctx.lineWidth = 1.2;
     ctx.beginPath();
@@ -299,26 +297,25 @@
     ctx.stroke();
 
     // --- NECK & HEAD ---
-    // Neck
     ctx.fillStyle = red;
     ctx.beginPath();
     ctx.rect(-6, -126, 12, 16);
     ctx.fill();
 
-    // Head base silhouette (profile facing right)
+    // Head base silhouette
     ctx.beginPath();
     ctx.moveTo(-9, -152);
     ctx.bezierCurveTo(-11, -170, 11, -170, 13, -152); // Crown
     ctx.lineTo(14, -141); // Forehead
     ctx.lineTo(18, -137); // Nose bridge
     ctx.lineTo(14, -133); // Under nose
-    ctx.lineTo(14, -127); // Calm mouth & chin
+    ctx.lineTo(14, -127); // Neutral mouth & chin
     ctx.lineTo(7, -122);  // Jawline
     ctx.lineTo(-8, -124); // Neck nape
     ctx.closePath();
     ctx.fill();
 
-    // 1970s Businessman Haircut Contour (neat side part, slight ear cover)
+    // 1970s Businessman Haircut Contour
     ctx.beginPath();
     ctx.moveTo(-11, -153);
     ctx.bezierCurveTo(-15, -174, 12, -174, 15, -151);
@@ -329,7 +326,7 @@
     ctx.closePath();
     ctx.fill();
 
-    // Negative space ear & side-part line
+    // Negative space side-part line
     ctx.strokeStyle = cutout;
     ctx.lineWidth = 1.2;
     ctx.beginPath();
@@ -357,14 +354,13 @@
     ctx.roundRect(-5, 0, 10, 50, 3);
     ctx.fill();
 
-    // Hand
+    // Hand & fingers
     ctx.translate(0, 48);
     ctx.beginPath();
     ctx.arc(0, 5, 5, 0, Math.PI * 2);
     ctx.fill();
 
     if (armReachProgress > 0.4) {
-      // Outstretched fingers
       ctx.fillRect(-2, 4, 10, 4);
     }
     ctx.restore(); // Left arm
@@ -392,13 +388,13 @@
     ctx.arc(0, 5, 6, 0, Math.PI * 2);
     ctx.fill();
 
-    // BRIEFCASE (Authentic 1971 Hard-shell Executive Attache)
+    // BRIEFCASE (1971 Hard-shell Executive Attache)
     if (briefcaseHold) {
       ctx.save();
       ctx.translate(2, 10);
       ctx.rotate(briefcaseTilt);
 
-      // Top handle loop
+      // Handle loop
       ctx.strokeStyle = red;
       ctx.lineWidth = 3.5;
       ctx.beginPath();
@@ -438,7 +434,6 @@
     }
 
     ctx.restore(); // Right arm
-
     ctx.restore(); // Torso
     ctx.restore(); // Root
   }
@@ -464,7 +459,7 @@
     const redBright = CONFIG.colors.redBright;
     const cutout = CONFIG.colors.cutout;
 
-    // Uniform torso (positioned behind the counter)
+    // Uniform torso (standing behind counter)
     ctx.fillStyle = red;
     ctx.beginPath();
     ctx.moveTo(-22, 0);
@@ -474,7 +469,7 @@
     ctx.closePath();
     ctx.fill();
 
-    // Airline collar & uniform neck scarf cutout
+    // Uniform neck scarf cutout
     ctx.fillStyle = cutout;
     ctx.beginPath();
     ctx.moveTo(-6, -96);
@@ -483,7 +478,7 @@
     ctx.closePath();
     ctx.fill();
 
-    // Red neck scarf knot
+    // Red scarf knot
     ctx.fillStyle = redBright;
     ctx.beginPath();
     ctx.arc(0, -74, 3, 0, Math.PI * 2);
@@ -493,7 +488,7 @@
     ctx.fillStyle = red;
     ctx.fillRect(-5, -108, 10, 14);
 
-    // Head profile (facing left toward the passenger)
+    // Head profile facing left toward the passenger
     ctx.beginPath();
     ctx.arc(0, -124, 15, 0, Math.PI * 2);
     ctx.fill();
@@ -506,7 +501,7 @@
     ctx.closePath();
     ctx.fill();
 
-    // Feminine profile facing left: nose & chin
+    // Profile facing left: nose & chin
     ctx.beginPath();
     ctx.moveTo(-13, -126);
     ctx.lineTo(-18, -122);
@@ -514,16 +509,16 @@
     ctx.closePath();
     ctx.fill();
 
-    // Arms and hands interaction
+    // Arms and hands
     ctx.save();
-    let armAngle = 0.45; // resting pose on counter
+    let armAngle = 0.40;
 
     if (action === 'give') {
       const p = MathUtils.clamp(actionProgress, 0, 1);
-      armAngle = MathUtils.lerp(0.45, -0.75, p);
+      armAngle = MathUtils.lerp(0.40, -0.85, p);
     } else if (action === 'receive') {
       const p = MathUtils.clamp(actionProgress, 0, 1);
-      armAngle = MathUtils.lerp(0.20, -0.50, p);
+      armAngle = MathUtils.lerp(0.20, -0.55, p);
     }
 
     ctx.translate(-14, -90);
@@ -544,14 +539,14 @@
     ctx.fill();
 
     // Ticket envelope held in hand
-    if (action === 'give' && actionProgress > 0.3) {
+    if (action === 'give' && actionProgress > 0.25) {
       ctx.fillStyle = redBright;
       ctx.save();
       ctx.rotate(-0.25);
-      ctx.fillRect(-18, -6, 32, 16);
+      ctx.fillRect(-20, -7, 36, 18);
       ctx.strokeStyle = cutout;
       ctx.lineWidth = 1;
-      ctx.strokeRect(-18, -6, 32, 16);
+      ctx.strokeRect(-20, -7, 36, 18);
       ctx.restore();
     }
 
@@ -599,8 +594,6 @@
   // SCENE 1 — AIRPORT ESTABLISHING SHOT
   // =========================================================================
   function scene_establishing_airport(ctx, width, height, t, progress, camera) {
-    // 0.0 to 0.4s: Pure black opening
-    // 0.4 to 2.8s: Slow cinematic red reveal and camera push
     const reveal = MathUtils.clamp((progress - 0.12) / 0.70, 0, 1);
     const alpha = MathUtils.smoothstep(reveal);
 
@@ -611,7 +604,6 @@
     }
 
     ctx.save();
-    // Camera slow push-in toward terminal entrance
     const camZoom = MathUtils.lerp(0.96, 1.05, MathUtils.easeInOutQuad(progress));
     const camPanY = MathUtils.lerp(18, -14, progress);
     ctx.translate(width / 2, height / 2);
@@ -620,6 +612,28 @@
 
     ctx.fillStyle = CONFIG.colors.bg;
     ctx.fillRect(0, 0, width, height);
+
+    // Modernist 1970s Airport Control Tower in background
+    ctx.save();
+    ctx.strokeStyle = `rgba(255, 32, 32, ${0.35 * alpha})`;
+    ctx.lineWidth = 1.5;
+    const towerX = 340;
+    const towerY = 160;
+    // Tower shaft
+    ctx.strokeRect(towerX - 18, towerY + 70, 36, 140);
+    // Tower cab
+    ctx.beginPath();
+    ctx.moveTo(towerX - 35, towerY + 70);
+    ctx.lineTo(towerX + 35, towerY + 70);
+    ctx.lineTo(towerX + 45, towerY + 25);
+    ctx.lineTo(towerX - 45, towerY + 25);
+    ctx.closePath();
+    ctx.stroke();
+    // Tower radome / beacon
+    ctx.beginPath();
+    ctx.arc(towerX, towerY + 15, 12, Math.PI, 0, false);
+    ctx.stroke();
+    ctx.restore();
 
     // Tarmac / Ground Line
     const groundY = 760;
@@ -732,7 +746,7 @@
     drawDistantPassenger(ctx, pass1X, groundY - 2, 0.42, true, t * 1.3, 1);
     drawDistantPassenger(ctx, pass2X, groundY - 2, 0.38, true, t * 1.1, -1);
 
-    // Fade out near end of shot for seamless transition
+    // Fade out near end of shot
     if (progress > 0.88) {
       const fadeOut = (progress - 0.88) / 0.12;
       ctx.fillStyle = `rgba(0, 0, 0, ${fadeOut})`;
@@ -748,7 +762,6 @@
   function scene_man_enters(ctx, width, height, t, progress, camera) {
     ctx.save();
 
-    // Camera slow tracking from left to right with the man
     const camPanX = MathUtils.lerp(-90, 90, progress);
     const camZoom = MathUtils.lerp(0.99, 1.025, progress);
 
@@ -793,6 +806,14 @@
       ctx.stroke();
     }
 
+    // Floor horizontal tile seams
+    for (let y = floorY; y <= height; y += 40) {
+      ctx.beginPath();
+      ctx.moveTo(-200, y);
+      ctx.lineTo(width + 200, y);
+      ctx.stroke();
+    }
+
     // Floor base line
     ctx.strokeStyle = CONFIG.colors.redMuted;
     ctx.lineWidth = 2.0;
@@ -817,11 +838,11 @@
     drawVectorArrow(ctx, signX + 215, signY + 26, 32, CONFIG.colors.redBright, 2.8);
     ctx.restore();
 
-    // Background passenger walking opposite direction for depth
+    // Background passenger walking opposite direction
     const distManX = 1420 - progress * 95;
     drawDistantPassenger(ctx, distManX, floorY - 55, 0.48, true, t * 1.2, -1);
 
-    // Queue barrier stanchions in mid-ground
+    // Queue barrier stanchions
     for (let sx = 1440; sx <= 1860; sx += 85) {
       ctx.strokeStyle = CONFIG.colors.redDim;
       ctx.lineWidth = 2.0;
@@ -845,7 +866,6 @@
     }
 
     // THE MIDDLE-AGED MAN
-    // Walks calmly from left edge (x ~ 160) to center-right (x ~ 1040)
     const manStartX = 160;
     const manEndX = 1040;
     const manX = MathUtils.lerp(manStartX, manEndX, MathUtils.clamp(progress / 0.95, 0, 1));
@@ -863,7 +883,6 @@
       facing: 1
     });
 
-    // Fade in & out
     if (progress < 0.10) {
       const fi = 1 - progress / 0.10;
       ctx.fillStyle = `rgba(0, 0, 0, ${fi})`;
@@ -883,7 +902,6 @@
   function scene_ticket_counter(ctx, width, height, t, progress, camera) {
     ctx.save();
 
-    // Camera slow push-in focusing toward the two figures
     const camZoom = MathUtils.lerp(1.0, 1.07, MathUtils.easeInOutQuad(progress));
     const camPanX = MathUtils.lerp(0, 45, progress);
 
@@ -921,12 +939,12 @@
     // Back wall vintage flight departure board
     ctx.strokeStyle = CONFIG.colors.redFaint;
     ctx.lineWidth = 1.5;
-    ctx.strokeRect(1060, 230, 580, 190);
+    ctx.strokeRect(1060, 220, 580, 190);
 
     ctx.font = `bold 16px ${CONFIG.fonts.mono}`;
     ctx.fillStyle = CONFIG.colors.redDim;
     ctx.textAlign = 'left';
-    ctx.fillText('FLIGHT   DESTINATION   DEP    GATE', 1085, 260);
+    ctx.fillText('FLIGHT   DESTINATION   DEP    GATE', 1085, 250);
 
     const flightRows = [
       'NW 305   SEATTLE       14:50  GATE 4',
@@ -934,16 +952,38 @@
       'WA 409   LOS ANGELES   15:40  GATE 8'
     ];
     flightRows.forEach((row, idx) => {
-      ctx.fillText(row, 1085, 295 + idx * 30);
+      ctx.fillText(row, 1085, 285 + idx * 30);
     });
 
-    // Desk Header Signage
-    ctx.font = `bold 22px ${CONFIG.fonts.bold}`;
-    ctx.fillStyle = CONFIG.colors.redBright;
-    ctx.textAlign = 'left';
-    ctx.fillText('PASSENGER SERVICE  \u2022  TICKETS', counterX + 25, counterY - 45);
+    // Hanging Overhead Desk Signage (elevated well above the agent's head)
+    ctx.strokeStyle = CONFIG.colors.red;
+    ctx.lineWidth = 2.0;
+    ctx.strokeRect(counterX + 20, counterY - 110, counterW - 40, 42);
 
-    // Counter Desk Top & Base (Solid Modernist Silhouette)
+    // Pendant suspension rods
+    ctx.beginPath();
+    ctx.moveTo(counterX + 80, counterY - 110);
+    ctx.lineTo(counterX + 80, 140);
+    ctx.moveTo(counterX + counterW - 80, counterY - 110);
+    ctx.lineTo(counterX + counterW - 80, 140);
+    ctx.stroke();
+
+    ctx.font = `bold 20px ${CONFIG.fonts.bold}`;
+    ctx.fillStyle = CONFIG.colors.redBright;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('PASSENGER SERVICE \u2022 TICKETS', counterX + counterW / 2, counterY - 89);
+
+    // AIRLINE TICKET AGENT (Drawn BEFORE the solid counter so desk occludes lower body)
+    drawTicketAgent(ctx, {
+      x: counterX + 175,
+      y: counterY + 120,
+      scale: 1.35,
+      action: 'idle',
+      actionProgress: 0
+    });
+
+    // Counter Desk Top & Base (Solid Modernist Silhouette in front of agent)
     ctx.fillStyle = CONFIG.colors.bg;
     ctx.fillRect(counterX, counterY, counterW, counterH);
 
@@ -955,6 +995,14 @@
     ctx.fillStyle = CONFIG.colors.red;
     ctx.fillRect(counterX - 25, counterY - 12, counterW + 40, 14);
 
+    // Desk fascia accent stripe
+    ctx.strokeStyle = CONFIG.colors.redDim;
+    ctx.lineWidth = 2.0;
+    ctx.beginPath();
+    ctx.moveTo(counterX, counterY + 50);
+    ctx.lineTo(counterX + counterW, counterY + 50);
+    ctx.stroke();
+
     // Baggage scale beside the counter
     ctx.strokeStyle = CONFIG.colors.redMuted;
     ctx.lineWidth = 2.0;
@@ -965,19 +1013,8 @@
     ctx.arc(counterX + counterW + 40, floorY - 110, 15, 0, Math.PI * 2);
     ctx.stroke();
 
-    // AIRLINE TICKET AGENT (Behind counter)
-    drawTicketAgent(ctx, {
-      x: counterX + 175,
-      y: counterY + 120,
-      scale: 1.35,
-      action: 'idle',
-      actionProgress: 0
-    });
-
     // MIDDLE-AGED MAN
-    // Walks in, smoothly decelerates and stops at counter
     const stopProgress = 0.62;
-    const isStopping = progress >= stopProgress;
     const walkT = MathUtils.clamp(progress / stopProgress, 0, 1);
     const manCurrentX = MathUtils.lerp(380, 895, MathUtils.easeOutQuad(walkT));
 
@@ -994,9 +1031,6 @@
       facing: 1
     });
 
-    // Hold this composition briefly: quiet, tense documentary stillness
-
-    // Transitions
     if (progress < 0.10) {
       const fi = 1 - progress / 0.10;
       ctx.fillStyle = `rgba(0, 0, 0, ${fi})`;
@@ -1016,9 +1050,9 @@
   function scene_purchase_ticket(ctx, width, height, t, progress, camera) {
     ctx.save();
 
-    // Medium shot framing the transaction
-    const camZoom = MathUtils.lerp(1.22, 1.38, MathUtils.easeInOutQuad(progress));
-    const camPanY = MathUtils.lerp(40, -10, progress);
+    // Intimate medium framing focusing on the counter transaction
+    const camZoom = MathUtils.lerp(1.25, 1.42, MathUtils.easeInOutQuad(progress));
+    const camPanY = MathUtils.lerp(30, -15, progress);
 
     ctx.translate(width / 2, height / 2);
     ctx.scale(camZoom, camZoom);
@@ -1029,36 +1063,17 @@
 
     const floorY = 860;
     const counterY = 610;
-    const counterX = 920;
+    const counterX = 840;
+    const counterW = 720;
 
     // Background horizontal divider lines
     ctx.strokeStyle = CONFIG.colors.redDim;
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(200, 360);
-    ctx.lineTo(width - 200, 360);
-    ctx.moveTo(200, 450);
-    ctx.lineTo(width - 200, 450);
-    ctx.stroke();
-
-    // Counter Desk
-    ctx.fillStyle = CONFIG.colors.bg;
-    ctx.fillRect(counterX - 40, counterY, 600, floorY - counterY);
-    ctx.strokeStyle = CONFIG.colors.red;
-    ctx.lineWidth = 3.0;
-    ctx.strokeRect(counterX - 40, counterY, 600, floorY - counterY);
-
-    // Counter Top
-    ctx.fillStyle = CONFIG.colors.red;
-    ctx.fillRect(counterX - 80, counterY - 14, 680, 16);
-
-    // 1971 Ticket Validator / Stamp Machine outline on desk
-    ctx.strokeStyle = CONFIG.colors.redMuted;
-    ctx.lineWidth = 2.0;
-    ctx.strokeRect(counterX + 180, counterY - 45, 60, 32);
-    ctx.beginPath();
-    ctx.moveTo(counterX + 230, counterY - 45);
-    ctx.lineTo(counterX + 245, counterY - 60);
+    ctx.moveTo(100, 360);
+    ctx.lineTo(width - 100, 360);
+    ctx.moveTo(100, 450);
+    ctx.lineTo(width - 100, 450);
     ctx.stroke();
 
     // TRANSACTION PHASES:
@@ -1082,14 +1097,36 @@
       agentProgress = 1.0;
     }
 
+    // Draw Agent behind counter
     drawTicketAgent(ctx, {
-      x: counterX + 260,
+      x: counterX + 340,
       y: counterY + 115,
       scale: 1.5,
       action: agentAction,
       actionProgress: agentProgress
     });
 
+    // Solid Counter Desk
+    ctx.fillStyle = CONFIG.colors.bg;
+    ctx.fillRect(counterX - 40, counterY, counterW, floorY - counterY);
+    ctx.strokeStyle = CONFIG.colors.red;
+    ctx.lineWidth = 3.0;
+    ctx.strokeRect(counterX - 40, counterY, counterW, floorY - counterY);
+
+    // Counter Top
+    ctx.fillStyle = CONFIG.colors.red;
+    ctx.fillRect(counterX - 80, counterY - 14, counterW + 60, 16);
+
+    // 1971 Ticket Validator / Stamp Machine outline on desk
+    ctx.strokeStyle = CONFIG.colors.redMuted;
+    ctx.lineWidth = 2.0;
+    ctx.strokeRect(counterX + 220, counterY - 45, 60, 32);
+    ctx.beginPath();
+    ctx.moveTo(counterX + 270, counterY - 45);
+    ctx.lineTo(counterX + 285, counterY - 60);
+    ctx.stroke();
+
+    // The Man
     const armReach = (progress < 0.35)
       ? MathUtils.easeOutQuad(p1)
       : (progress < 0.65)
@@ -1097,7 +1134,7 @@
         : MathUtils.lerp(0.35, 0.95, MathUtils.easeOutQuad(p3));
 
     drawManSilhouette(ctx, {
-      x: 720,
+      x: 650,
       y: floorY,
       scale: 1.5,
       walkPhase: 0,
@@ -1110,10 +1147,10 @@
     // Physical Ticket or Payment exchange on counter
     if (progress >= 0.35) {
       const ticketX = (progress < 0.65)
-        ? MathUtils.lerp(counterX + 180, counterX + 20, MathUtils.easeInOutQuad(p2))
+        ? MathUtils.lerp(counterX + 220, counterX + 40, MathUtils.easeInOutQuad(p2))
         : (progress < 0.85)
-          ? counterX + 20
-          : MathUtils.lerp(counterX + 20, counterX - 15, MathUtils.easeOutQuad((progress - 0.85) / 0.15));
+          ? counterX + 40
+          : MathUtils.lerp(counterX + 40, counterX + 5, MathUtils.easeOutQuad((progress - 0.85) / 0.15));
 
       const ticketY = (progress < 0.85)
         ? counterY - 14
@@ -1132,7 +1169,7 @@
       ctx.lineWidth = 2.2;
       ctx.strokeRect(-35, -12, 70, 24);
 
-      // Subtle ticket typography lines
+      // Typography lines
       ctx.fillStyle = CONFIG.colors.redBright;
       ctx.fillRect(-28, -6, 26, 3);
       ctx.fillRect(-28, 0, 46, 3);
@@ -1141,7 +1178,7 @@
       ctx.restore();
     } else {
       // Payment (folded currency) handed over by man
-      const billX = MathUtils.lerp(790, counterX + 20, MathUtils.easeOutQuad(p1));
+      const billX = MathUtils.lerp(720, counterX + 40, MathUtils.easeOutQuad(p1));
       const billY = MathUtils.lerp(counterY - 35, counterY - 12, p1);
       ctx.save();
       ctx.fillStyle = CONFIG.colors.red;
@@ -1152,7 +1189,6 @@
       ctx.restore();
     }
 
-    // Transitions
     if (progress < 0.08) {
       const fi = 1 - progress / 0.08;
       ctx.fillStyle = `rgba(0, 0, 0, ${fi})`;
@@ -1172,7 +1208,6 @@
   function scene_ticket_closeup(ctx, width, height, t, progress, camera) {
     ctx.save();
 
-    // Slow, solemn camera drift and push-in toward the word "SEATTLE"
     const camZoom = MathUtils.lerp(1.0, 1.08, MathUtils.easeInOutQuad(progress));
     const camPanY = MathUtils.lerp(0, -14, progress);
 
@@ -1183,10 +1218,9 @@
     ctx.fillStyle = CONFIG.colors.bg;
     ctx.fillRect(0, 0, width, height);
 
-    // Alpha calculation:
     // Fade in from black 0.0 -> 0.15
     // Steady hold 0.15 -> 0.70
-    // Fade to pure black 0.70 -> 1.00 (solemn ending on pure black)
+    // Fade to pure black 0.70 -> 1.00
     let alpha = 1.0;
     if (progress < 0.15) {
       alpha = MathUtils.smoothstep(progress / 0.15);
@@ -1201,31 +1235,65 @@
       return;
     }
 
-    // Hand Holding the Ticket at Left
-    ctx.save();
-    ctx.fillStyle = `rgba(255, 32, 32, ${alpha * 0.95})`;
-    // Thumb resting over ticket border
-    ctx.beginPath();
-    ctx.arc(380, 540, 28, 0, Math.PI * 2);
-    ctx.fill();
-    // Fingers / hand mass below
-    ctx.beginPath();
-    ctx.moveTo(260, 780);
-    ctx.lineTo(390, 620);
-    ctx.lineTo(380, 530);
-    ctx.lineTo(320, 500);
-    ctx.lineTo(220, 780);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-
     // THE 1971 AIRLINE PASSENGER TICKET
-    const tW = 880;
-    const tH = 470;
-    const tX = (width - tW) / 2 + 55;
+    const tW = 900;
+    const tH = 480;
+    const tX = (width - tW) / 2 + 80;
     const tY = (height - tH) / 2;
 
-    // Ticket Background (Pure negative space black with red border)
+    // --- ANATOMICALLY REFINED SILHOUETTE HAND HOLDING TICKET ---
+    ctx.save();
+    ctx.fillStyle = `rgba(255, 32, 32, ${alpha * 0.95})`;
+
+    // Arm sleeve & white cuff cutout coming from bottom left
+    const wristX = tX - 90;
+    const wristY = tY + 340;
+
+    // Suit sleeve
+    ctx.beginPath();
+    ctx.moveTo(0, height + 80);
+    ctx.lineTo(wristX - 30, wristY + 80);
+    ctx.lineTo(wristX + 45, wristY + 40);
+    ctx.lineTo(wristX + 110, wristY + 110);
+    ctx.lineTo(120, height + 100);
+    ctx.closePath();
+    ctx.fill();
+
+    // White shirt cuff negative space slit
+    ctx.strokeStyle = CONFIG.colors.cutout;
+    ctx.lineWidth = 3.0;
+    ctx.beginPath();
+    ctx.moveTo(wristX - 5, wristY + 58);
+    ctx.lineTo(wristX + 65, wristY + 22);
+    ctx.stroke();
+
+    // Hand palm & index finger supporting bottom edge of ticket
+    ctx.beginPath();
+    ctx.moveTo(wristX + 15, wristY + 35);
+    ctx.lineTo(tX + 120, tY + tH + 6);
+    ctx.lineTo(tX + 130, tY + tH - 18);
+    ctx.lineTo(wristX + 45, wristY - 10);
+    ctx.closePath();
+    ctx.fill();
+
+    // Thumb gripping over the left face of the ticket
+    ctx.beginPath();
+    ctx.moveTo(wristX + 25, wristY);
+    ctx.bezierCurveTo(wristX + 40, wristY - 70, tX - 25, tY + 210, tX + 28, tY + 235); // thumb tip
+    ctx.bezierCurveTo(tX + 42, tY + 242, tX + 22, tY + 270, wristX + 60, wristY + 40);
+    ctx.closePath();
+    ctx.fill();
+
+    // Negative space thumbnail accent
+    ctx.strokeStyle = CONFIG.colors.cutout;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.arc(tX + 24, tY + 246, 7, -Math.PI * 0.8, Math.PI * 0.2);
+    ctx.stroke();
+
+    ctx.restore();
+
+    // --- TICKET BODY ---
     ctx.fillStyle = CONFIG.colors.bg;
     ctx.fillRect(tX, tY, tW, tH);
 
@@ -1234,14 +1302,14 @@
     ctx.lineWidth = 3.5;
     ctx.strokeRect(tX, tY, tW, tH);
 
-    // Inner dashed perforation line
+    // Perforated inner stub border
     ctx.strokeStyle = `rgba(255, 32, 32, ${alpha * 0.40})`;
     ctx.lineWidth = 1.5;
     ctx.setLineDash([8, 6]);
     ctx.strokeRect(tX + 12, tY + 12, tW - 24, tH - 24);
-    ctx.setLineDash([]); // reset
+    ctx.setLineDash([]);
 
-    // Ticket Header Banner
+    // Header dividing line
     ctx.strokeStyle = `rgba(255, 32, 32, ${alpha * 0.65})`;
     ctx.lineWidth = 2.0;
     ctx.beginPath();
@@ -1249,7 +1317,7 @@
     ctx.lineTo(tX + tW - 12, tY + 65);
     ctx.stroke();
 
-    // Header Text: PASSENGER TICKET & BAGGAGE CHECK
+    // Header Text
     ctx.font = `600 20px ${CONFIG.fonts.bold}`;
     ctx.fillStyle = `rgba(255, 59, 59, ${alpha * 0.9})`;
     ctx.textAlign = 'left';
@@ -1268,7 +1336,7 @@
     ctx.fillStyle = `rgba(255, 59, 59, ${alpha})`;
     ctx.fillText('ONE WAY', tX + 50, tY + 130);
 
-    // Divider accent line
+    // Accent line
     ctx.strokeStyle = `rgba(255, 32, 32, ${alpha * 0.4})`;
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -1282,20 +1350,20 @@
     ctx.fillStyle = `rgba(255, 32, 32, ${alpha * 0.85})`;
     ctx.fillText('PORTLAND', tX + 50, tY + 230);
 
-    // Clean vector route arrow
+    // Vector route arrow
     drawVectorArrow(ctx, tX + 275, tY + 220, 50, `rgba(255, 59, 59, ${alpha * 0.85})`, 3.5);
 
     // SEATTLE (Prominently emphasized: larger, bold, authoritative, bright red)
-    ctx.font = `bold 56px ${CONFIG.fonts.bold}`;
+    ctx.font = `bold 58px ${CONFIG.fonts.bold}`;
     ctx.fillStyle = `rgba(255, 59, 59, ${alpha})`;
-    ctx.fillText('SEATTLE', tX + 355, tY + 233);
+    ctx.fillText('SEATTLE', tX + 355, tY + 234);
 
     // Underline accent under SEATTLE
-    ctx.strokeStyle = `rgba(255, 59, 59, ${alpha * 0.9})`;
+    ctx.strokeStyle = `rgba(255, 59, 59, ${alpha * 0.95})`;
     ctx.lineWidth = 3.5;
     ctx.beginPath();
     ctx.moveTo(tX + 355, tY + 252);
-    ctx.lineTo(tX + 645, tY + 252);
+    ctx.lineTo(tX + 665, tY + 252);
     ctx.stroke();
 
     // 3. DATE: NOV 24, 1971
@@ -1338,11 +1406,9 @@
     const t = MathUtils.clamp(timeInSeconds, 0, CONFIG.totalDuration);
     const { width, height, shots } = CONFIG;
 
-    // Clear frame to pure black
     ctx.fillStyle = CONFIG.colors.bg;
     ctx.fillRect(0, 0, width, height);
 
-    // Find current active shot
     let activeShot = shots[0];
     for (let i = 0; i < shots.length; i++) {
       if (t >= shots[i].start && (t < shots[i].end || i === shots.length - 1)) {
