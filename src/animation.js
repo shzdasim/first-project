@@ -2,8 +2,8 @@
  * 1971 Mystery Documentary Animation Engine
  * Red-on-Black Minimalist Cinematic Motion Graphic
  *
- * Sequence:
- * Narration: "In the afternoon of November 24, 1971, a middle-aged man carrying a briefcase
+ * Narration:
+ * "In the afternoon of November 24, 1971, a middle-aged man carrying a briefcase
  * walked into Portland International Airport and purchased a one-way ticket to Seattle, Washington."
  *
  * Visual Rules:
@@ -33,7 +33,7 @@
       red: '#FF2020',
       redBright: '#FF3B3B',
       redGlow: '#FF5252',
-      redDeep: '#9A1010',
+      redDeep: '#A01010',
       redDim: 'rgba(255, 32, 32, 0.45)',
       redFaint: 'rgba(255, 32, 32, 0.14)',
       cutout: '#000000' // pure negative space
@@ -133,19 +133,12 @@
     ctx.closePath();
     ctx.fill();
 
-    // Subtle 1971 side-part negative space line
+    // Subtle 1971 side-part negative space line along the hair crown
     ctx.strokeStyle = CONFIG.colors.cutout;
     ctx.lineWidth = 1.3;
     ctx.beginPath();
     ctx.moveTo(-6, -34);
     ctx.quadraticCurveTo(2, -37, 12, -31);
-    ctx.stroke();
-
-    // Clean hair sideburn / ear notch contour
-    ctx.beginPath();
-    ctx.moveTo(3, -18);
-    ctx.lineTo(3, -8);
-    ctx.quadraticCurveTo(0, -6, -2, -10);
     ctx.stroke();
 
     ctx.restore();
@@ -1125,10 +1118,10 @@
   function scene_purchase_ticket(ctx, width, height, t, progress, camera) {
     ctx.save();
 
-    // Intimate medium two-shot framing focusing on the counter transaction
-    // Smooth camera push-in toward the counter transaction
-    const camZoom = MathUtils.lerp(1.36, 1.55, MathUtils.easeInOutQuad(progress));
-    const camPanY = MathUtils.lerp(20, -10, progress);
+    // Intimate Medium Two-Shot framing:
+    // Tight cinematic framing centered on the transaction
+    const camZoom = MathUtils.lerp(1.80, 2.02, MathUtils.easeInOutQuad(progress));
+    const camPanY = MathUtils.lerp(15, -8, progress);
 
     ctx.translate(width / 2, height / 2);
     ctx.scale(camZoom, camZoom);
@@ -1137,8 +1130,8 @@
     ctx.fillStyle = CONFIG.colors.bg;
     ctx.fillRect(0, 0, width, height);
 
-    const floorY = 880;
-    const counterTopY = 660; // waist height
+    const floorY = 900;
+    const counterTopY = 640;
     const counterLeft = 710;
     const counterRight = 1210;
     const counterW = counterRight - counterLeft;
@@ -1156,14 +1149,14 @@
     // Flight NW 305 Board in background
     ctx.strokeStyle = CONFIG.colors.redFaint;
     ctx.lineWidth = 1.5;
-    ctx.strokeRect(700, 220, 520, 95);
-    ctx.font = `bold 16px ${CONFIG.fonts.mono}`;
+    ctx.strokeRect(700, 360, 520, 85);
+    ctx.font = `bold 15px ${CONFIG.fonts.mono}`;
     ctx.fillStyle = CONFIG.colors.redDim;
-    ctx.fillText('NW 305   PORTLAND -> SEATTLE   14:50', 730, 258);
-    ctx.fillText('STATUS: ON TIME    BOARDING    GATE 4', 730, 290);
+    ctx.fillText('NW 305   PORTLAND -> SEATTLE   14:50', 730, 395);
+    ctx.fillText('STATUS: ON TIME    BOARDING    GATE 4', 730, 425);
 
-    // 1. TICKET AGENT (standing on floorY behind counter, framed on right)
-    const agentX = 1140;
+    // 1. TICKET AGENT (Framed on right, standing behind counter)
+    const agentX = 1130;
     const agentShoulderY = counterTopY - 110;
 
     ctx.save();
@@ -1209,11 +1202,11 @@
 
     // 2. COUNTER DESK (Solid black fill in front of agent to occlude lower body)
     ctx.fillStyle = CONFIG.colors.bg;
-    ctx.fillRect(counterLeft, counterTopY, counterW, floorY - counterTopY + 20);
+    ctx.fillRect(counterLeft, counterTopY, counterW, floorY - counterTopY);
 
     ctx.strokeStyle = CONFIG.colors.red;
     ctx.lineWidth = 3.0;
-    ctx.strokeRect(counterLeft, counterTopY, counterW, floorY - counterTopY + 20);
+    ctx.strokeRect(counterLeft, counterTopY, counterW, floorY - counterTopY);
 
     // Counter Top Shelf
     ctx.fillStyle = CONFIG.colors.red;
@@ -1222,10 +1215,10 @@
     // 1971 Ticket Validator / Stamp Machine outline on desk
     ctx.strokeStyle = CONFIG.colors.redDim;
     ctx.lineWidth = 2.0;
-    ctx.strokeRect(counterRight - 120, counterTopY - 38, 50, 24);
+    ctx.strokeRect(counterRight - 110, counterTopY - 38, 48, 24);
 
     // 3. THE MIDDLE-AGED MAN (Framed on left, facing right)
-    const manX = 780;
+    const manX = 790;
     const manShoulderY = counterTopY - 110;
 
     ctx.save();
@@ -1320,7 +1313,7 @@
 
     ctx.restore(); // Man Upper Body
 
-    // 4. TRANSACTION DYNAMICS ACROSS THE COUNTER
+    // 4. TRANSACTION DYNAMICS ACROSS COUNTER
     // Phases:
     // p1 (0.0 to 0.35): Man hands over cash payment ($20 bill fold)
     // p2 (0.35 to 0.70): Agent validates and slides ticket envelope across counter
@@ -1329,53 +1322,63 @@
     const p2 = MathUtils.clamp((progress - 0.35) / 0.35, 0, 1);
     const p3 = MathUtils.clamp((progress - 0.70) / 0.30, 0, 1);
 
-    // Man's reaching arm (front arm)
+    // Man's reaching arm with articulated elbow
     const manArmT = progress < 0.35 ? p1 : progress < 0.70 ? 0.45 : 0.45 + p3 * 0.55;
-    const manHandX = 800 + manArmT * 135;
+    const manHandX = 820 + manArmT * 125;
     const manHandY = counterTopY - 14;
+    const manElbowX = manX + 16;
+    const manElbowY = manShoulderY + 44;
 
     ctx.save();
     ctx.fillStyle = CONFIG.colors.red;
+    ctx.strokeStyle = CONFIG.colors.red;
+    ctx.lineWidth = 10;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
     ctx.beginPath();
-    ctx.moveTo(manX + 18, manShoulderY + 8);
-    ctx.lineTo(manX + 8, manShoulderY + 8);
-    ctx.lineTo(manHandX - 8, manHandY);
-    ctx.lineTo(manHandX + 8, manHandY);
-    ctx.closePath();
-    ctx.fill();
+    ctx.moveTo(manX + 14, manShoulderY + 6);
+    ctx.lineTo(manElbowX, manElbowY);
+    ctx.lineTo(manHandX, manHandY);
+    ctx.stroke();
 
     // White shirt cuff slit
     ctx.strokeStyle = CONFIG.colors.cutout;
     ctx.lineWidth = 2.0;
     ctx.beginPath();
-    ctx.moveTo(manHandX - 12, manHandY - 4);
-    ctx.lineTo(manHandX - 12, manHandY + 4);
+    ctx.moveTo(manHandX - 10, manHandY - 4);
+    ctx.lineTo(manHandX - 10, manHandY + 4);
     ctx.stroke();
 
-    // Man hand
+    // Man Hand
     ctx.beginPath();
-    ctx.arc(manHandX, manHandY, 7, 0, Math.PI * 2);
+    ctx.arc(manHandX, manHandY, 6.5, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
 
-    // Agent's reaching arm
+    // Agent's reaching arm with articulated elbow
     const agentArmT = progress < 0.35 ? p1 * 0.7 : progress < 0.70 ? 0.7 + p2 * 0.3 : 1.0 - p3 * 0.4;
-    const agentHandX = 1120 - agentArmT * 130;
+    const agentHandX = 1100 - agentArmT * 115;
     const agentHandY = counterTopY - 14;
+    const agentElbowX = agentX - 24;
+    const agentElbowY = agentShoulderY + 44;
 
     ctx.save();
     ctx.fillStyle = CONFIG.colors.red;
-    ctx.beginPath();
-    ctx.moveTo(agentX - 18, agentShoulderY + 8);
-    ctx.lineTo(agentX - 8, agentShoulderY + 8);
-    ctx.lineTo(agentHandX + 8, agentHandY);
-    ctx.lineTo(agentHandX - 8, agentHandY);
-    ctx.closePath();
-    ctx.fill();
+    ctx.strokeStyle = CONFIG.colors.red;
+    ctx.lineWidth = 10;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
 
-    // Agent hand
     ctx.beginPath();
-    ctx.arc(agentHandX, agentHandY, 7, 0, Math.PI * 2);
+    ctx.moveTo(agentX - 14, agentShoulderY + 6);
+    ctx.lineTo(agentElbowX, agentElbowY);
+    ctx.lineTo(agentHandX, agentHandY);
+    ctx.stroke();
+
+    // Agent Hand
+    ctx.beginPath();
+    ctx.arc(agentHandX, agentHandY, 6.5, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
 
@@ -1394,25 +1397,25 @@
     } else {
       // Red ticket envelope sliding across counter and being picked up
       const ticketX = progress < 0.70
-        ? 1030 - p2 * 90
-        : 940 - p3 * 30;
+        ? 1020 - p2 * 80
+        : 940 - p3 * 25;
       const ticketY = counterTopY - 16;
 
       ctx.save();
       ctx.translate(ticketX, ticketY);
 
       ctx.fillStyle = CONFIG.colors.cutout;
-      ctx.fillRect(-32, -10, 64, 20);
+      ctx.fillRect(-34, -11, 68, 22);
       ctx.strokeStyle = CONFIG.colors.redBright;
-      ctx.lineWidth = 2.2;
-      ctx.strokeRect(-32, -10, 64, 20);
+      ctx.lineWidth = 2.4;
+      ctx.strokeRect(-34, -11, 68, 22);
 
       ctx.fillStyle = CONFIG.colors.redBright;
-      ctx.fillRect(-26, -5, 24, 2.5);
-      ctx.fillRect(-26, 0, 42, 2.5);
-      ctx.fillRect(-26, 4, 30, 2);
+      ctx.fillRect(-28, -6, 26, 2.5);
+      ctx.fillRect(-28, 0, 46, 2.5);
+      ctx.fillRect(-28, 5, 34, 2);
 
-      ctx.font = `bold 7.5px ${CONFIG.fonts.mono}`;
+      ctx.font = `bold 8px ${CONFIG.fonts.mono}`;
       ctx.fillText('SEATTLE', 6, -2);
 
       ctx.restore();
