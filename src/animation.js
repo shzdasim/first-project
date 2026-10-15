@@ -133,14 +133,6 @@
     ctx.closePath();
     ctx.fill();
 
-    // Subtle 1971 side-part negative space line along the hair crown
-    ctx.strokeStyle = CONFIG.colors.cutout;
-    ctx.lineWidth = 1.3;
-    ctx.beginPath();
-    ctx.moveTo(-6, -34);
-    ctx.quadraticCurveTo(2, -37, 12, -31);
-    ctx.stroke();
-
     ctx.restore();
   }
 
@@ -167,14 +159,6 @@
     ctx.lineTo(0, 0);                                   // jawline
     ctx.closePath();
     ctx.fill();
-
-    // Hair contour in negative space
-    ctx.strokeStyle = CONFIG.colors.cutout;
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.moveTo(-6, -32);
-    ctx.quadraticCurveTo(2, -35, 11, -28);
-    ctx.stroke();
 
     ctx.restore();
   }
