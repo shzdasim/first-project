@@ -3,12 +3,23 @@
  * Uses @napi-rs/canvas (Skia 2D) and FFmpeg
  */
 
-const { createCanvas } = require('@napi-rs/canvas');
+const { createCanvas, GlobalFonts } = require('@napi-rs/canvas');
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const MysteryAnimation = require('./src/animation.js');
 
+// Register Fonts for Node Canvas Skia engine
+const regularWoff = path.resolve(__dirname, 'node_modules/@fontsource/roboto/files/roboto-latin-400-normal.woff');
+const boldWoff = path.resolve(__dirname, 'node_modules/@fontsource/roboto/files/roboto-latin-700-normal.woff');
+const monoWoff = path.resolve(__dirname, 'node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-400-normal.woff');
+
+if (fs.existsSync(regularWoff)) GlobalFonts.registerFromPath(regularWoff, 'Roboto');
+if (fs.existsSync(boldWoff)) GlobalFonts.registerFromPath(boldWoff, 'RobotoBold');
+if (fs.existsSync(monoWoff)) GlobalFonts.registerFromPath(monoWoff, 'RobotoMono');
+
+console.log('Registered Fonts:', GlobalFonts.families.map(f => f.family).join(', '));
+
+const MysteryAnimation = require('./src/animation.js');
 const { CONFIG, renderFrame } = MysteryAnimation;
 const WIDTH = CONFIG.width;
 const HEIGHT = CONFIG.height;
@@ -53,11 +64,7 @@ const ffmpegArgs = [
 
 const ffmpeg = spawn(ffmpegBinary, ffmpegArgs);
 
-ffmpeg.stderr.on('data', (data) => {
-  // Uncomment to debug FFmpeg output if needed
-  // process.stderr.write(data.toString());
-});
-
+ffmpeg.stderr.on('data', () => {});
 ffmpeg.on('error', (err) => {
   console.error('FFmpeg process error:', err);
 });
