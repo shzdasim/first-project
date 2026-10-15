@@ -526,6 +526,61 @@
   }
 
   /**
+   * Draws the Airline Ticket Agent behind the counter.
+   * 1971 airline uniform (collared blazer, neck scarf cutout, neat updo hairstyle).
+   */
+  function drawTicketAgent(ctx, options = {}) {
+    const {
+      x = 1140,
+      y = 550,
+      scale = 1.0,
+      facing = -1
+    } = options;
+
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(scale * (facing < 0 ? 1 : -1), scale);
+
+    // Upper Torso / Blazer
+    ctx.fillStyle = CONFIG.colors.red;
+    ctx.beginPath();
+    ctx.moveTo(-22, 0);  // front shoulder
+    ctx.lineTo(22, 0);   // back shoulder
+    ctx.bezierCurveTo(26, 40, 24, 90, 20, 160);
+    ctx.lineTo(-20, 160);
+    ctx.bezierCurveTo(-24, 90, -26, 40, -22, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // White blouse cutout
+    ctx.fillStyle = CONFIG.colors.cutout;
+    ctx.beginPath();
+    ctx.moveTo(-14, 0);
+    ctx.lineTo(-2, 0);
+    ctx.lineTo(-8, 36);
+    ctx.closePath();
+    ctx.fill();
+
+    // Red airline scarf
+    ctx.fillStyle = CONFIG.colors.redBright;
+    ctx.beginPath();
+    ctx.arc(-8, 30, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Neck
+    ctx.fillStyle = CONFIG.colors.red;
+    ctx.fillRect(-9, -20, 16, 22);
+
+    // Head
+    ctx.save();
+    ctx.translate(-1, -20);
+    drawAgentHead(ctx, 1);
+    ctx.restore();
+
+    ctx.restore();
+  }
+
+  /**
    * Distant Passenger Silhouette for spatial depth.
    */
   function drawDistantPassenger(ctx, x, y, scale = 0.4, walking = false, phase = 0, dir = 1) {
