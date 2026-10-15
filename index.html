@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>November 24, 1971 — Portland International Airport</title>
+  <style>
+    :root {
+      --bg: #000000;
+      --panel-bg: #080808;
+      --border-red: #3a0a0a;
+      --red: #FF2020;
+      --red-bright: #FF4242;
+      --red-dim: rgba(255, 32, 32, 0.4);
+      --red-subtle: rgba(255, 32, 32, 0.15);
+      --text-muted: #882020;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--red);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-x: hidden;
+      padding: 20px 16px 40px;
+    }
+
+    /* Header Bar */
+    header {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--border-red);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    .title-group h1 {
+      font-size: 20px;
+      letter-spacing: 3px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--red-bright);
+    }
+
+    .title-group p {
+      font-size: 13px;
+      color: var(--red-dim);
+      letter-spacing: 1.5px;
+      margin-top: 4px;
+      font-family: "Courier New", monospace;
+    }
+
+    .meta-tag {
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      color: var(--red);
+      border: 1px solid var(--border-red);
+      padding: 4px 10px;
+      background: rgba(255, 32, 32, 0.05);
+      letter-spacing: 1px;
+    }
+
+    /* Video Player Viewport Container */
+    .viewport-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      aspect-ratio: 16 / 9;
+      background: #000000;
+      border: 1px solid #2a0000;
+      box-shadow: 0 0 40px rgba(255, 32, 32, 0.08);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    canvas#viewport {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background-color: #000000;
+      display: block;
+    }
+
+    video#videoPlayer {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background-color: #000000;
+      display: none;
+    }
+
+    /* Narration Overlay Subtitle */
+    .narration-overlay {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      border-left: 3px solid var(--red);
+      border-right: 3px solid var(--red);
+      padding: 10px 24px;
+      font-size: 15px;
+      letter-spacing: 1px;
+      line-height: 1.5;
+      text-align: center;
+      max-width: 85%;
+      color: var(--red-bright);
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      font-family: "Georgia", serif;
+      font-style: italic;
+    }
+
+    /* Shot Indicator Badge */
+    .shot-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 1px solid var(--border-red);
+      color: var(--red-bright);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      letter-spacing: 1px;
+      padding: 5px 10px;
+      pointer-events: none;
+    }
+
+    /* Control Panel */
+    .controls-panel {
+      width: 100%;
+      max-width: 1200px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-red);
+      border-top: none;
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Progress & Scrubber Bar */
+    .timeline-container {
+      position: relative;
+      width: 100%;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .timeline-track {
+      position: relative;
+      width: 100%;
+      height: 6px;
+      background: #1a0000;
+      border-radius: 3px;
+      overflow: visible;
+    }
+
+    .timeline-progress {
+      height: 100%;
+      width: 0%;
+      background: var(--red);
+      box-shadow: 0 0 10px rgba(255, 32, 32, 0.6);
+      border-radius: 3px;
+      position: relative;
+    }
+
+    .timeline-handle {
+      position: absolute;
+      right: -6px;
+      top: -5px;
+      width: 16px;
+      height: 16px;
+      background: var(--red-bright);
+      border: 2px solid #000;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #FF2020;
+    }
+
+    /* Shot Markers on Timeline */
+    .shot-marker {
+      position: absolute;
+      top: -3px;
+      width: 2px;
+      height: 12px;
+      background: rgba(255, 32, 32, 0.4);
+      pointer-events: none;
+    }
+
+    /* Action Buttons Row */
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .primary-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button.btn {
+      background: #0d0000;
+      border: 1px solid var(--border-red);
+      color: var(--red);
+      padding: 7px 14px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      letter-spacing: 0.5px;
+    }
+
+    button.btn:hover {
+      background: rgba(255, 32, 32, 0.15);
+      border-color: var(--red);
+      color: var(--red-bright);
+      box-shadow: 0 0 8px rgba(255, 32, 32, 0.2);
+    }
+
+    button.btn.active {
+      background: var(--red);
+      color: #000;
+      font-weight: 700;
+      border-color: var(--red-bright);
+    }
+
+    .time-display {
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      letter-spacing: 1px;
+      color: var(--red-bright);
+      margin-left: 6px;
+      min-width: 140px;
+    }
+
+    .shot-buttons {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      overflow-x: auto;
+    }
+
+    .shot-btn {
+      font-size: 11px;
+      padding: 5px 8px;
+      background: #0a0202;
+      border: 1px solid #330808;
+      color: var(--red-dim);
+      cursor: pointer;
+      font-family: "Courier New", monospace;
+      white-space: nowrap;
+    }
+
+    .shot-btn:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .shot-btn.active {
+      border-color: var(--red);
+      color: var(--red-bright);
+      background: rgba(255, 32, 32, 0.12);
+    }
+
+    .secondary-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Documentation Section */
+    .doc-section {
+      width: 100%;
+      max-width: 1200px;
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 860px) {
+      .doc-section {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-red);
+      padding: 18px 20px;
+    }
+
+    .card h2 {
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--red-bright);
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-red);
+      padding-bottom: 6px;
+    }
+
+    .card p, .card li {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #cc4444;
+      margin-bottom: 8px;
+    }
+
+    .card ul {
+      padding-left: 20px;
+    }
+
+    .spec-table {
+      width: 100%;
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      border-collapse: collapse;
+    }
+
+    .spec-table td {
+      padding: 6px 4px;
+      border-bottom: 1px solid #200000;
+    }
+
+    .spec-table td:first-child {
+      color: var(--red-dim);
+      width: 45%;
+    }
+
+    .spec-table td:last-child {
+      color: var(--red-bright);
+      font-weight: 600;
+    }
+
+    a.download-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: rgba(255, 32, 32, 0.12);
+      border: 1px solid var(--red);
+      color: var(--red-bright);
+      padding: 10px;
+      text-decoration: none;
+      font-weight: 600;
+      letter-spacing: 1px;
+      font-size: 13px;
+      transition: all 0.2s ease;
+      margin-top: 10px;
+    }
+
+    a.download-link:hover {
+      background: var(--red);
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="title-group">
+      <h1>Historical Mystery Animation — 1971</h1>
+      <p>RED-ON-BLACK MINIMALIST CINEMATIC MOTION GRAPHIC</p>
+    </div>
+    <div class="meta-tag">1920 &times; 1080 &bull; 30 FPS &bull; 14.0s</div>
+  </header>
+
+  <!-- Viewport Area -->
+  <div class="viewport-wrapper" id="viewportWrapper">
+    <!-- Real-time Canvas Rendering Engine -->
+    <canvas id="viewport" width="1920" height="1080"></canvas>
+    
+    <!-- Rendered MP4 Video Element (Switchable) -->
+    <video id="videoPlayer" playsinline preload="auto">
+      <source src="mystery_1971_portland_seattle.mp4" type="video/mp4">
+    </video>
+
+    <!-- Dynamic Shot Indicator -->
+    <div class="shot-badge" id="shotBadge">SHOT 1: ESTABLISHING AIRPORT</div>
+
+    <!-- Synchronized Narration Subtitle Overlay -->
+    <div class="narration-overlay" id="narrationOverlay">
+      &ldquo;In the afternoon of November 24, 1971, a middle-aged man carrying a briefcase walked into Portland International Airport and purchased a one-way ticket to Seattle, Washington.&rdquo;
+    </div>
+  </div>
+
+  <!-- Controls Panel -->
+  <div class="controls-panel">
+    <!-- Timeline Scrubber -->
+    <div class="timeline-container" id="timelineContainer">
+      <div class="timeline-track" id="timelineTrack">
+        <div class="timeline-progress" id="timelineProgress">
+          <div class="timeline-handle"></div>
+        </div>
+        <!-- Markers populated by JS -->
+      </div>
+    </div>
+
+    <!-- Buttons Row -->
+    <div class="button-row">
+      <div class="primary-controls">
+        <button class="btn" id="playBtn" title="Play / Pause (Space)">
+          <span id="playIcon">&#9654;</span> <span id="playText">PLAY</span>
+        </button>
+        <button class="btn" id="prevFrameBtn" title="Previous Frame (&larr;)">&#9664;&#10072;</button>
+        <button class="btn" id="nextFrameBtn" title="Next Frame (&rarr;)">&#10072;&#9654;</button>
+        <button class="btn" id="loopBtn" title="Toggle Loop">&#128257; LOOP</button>
+        <span class="time-display" id="timeDisplay">00:00.00 / 00:14.00</span>
+      </div>
+
+      <!-- Quick Shot Jump Buttons -->
+      <div class="shot-buttons">
+        <button class="shot-btn" data-time="0.0">1. AIRPORT</button>
+        <button class="shot-btn" data-time="2.8">2. ENTRANCE</button>
+        <button class="shot-btn" data-time="5.8">3. COUNTER</button>
+        <button class="shot-btn" data-time="8.5">4. PURCHASE</button>
+        <button class="shot-btn" data-time="11.4">5. SEATTLE</button>
+      </div>
+
+      <div class="secondary-controls">
+        <button class="btn" id="engineToggleBtn" title="Switch between Code Canvas and MP4 Video">
+          <span id="engineLabel">ENGINE: CANVAS 2D</span>
+        </button>
+        <button class="btn" id="audioToggleBtn" title="Toggle Atmospheric Audio Design">
+          <span id="audioLabel">&#128263; AMBIENCE</span>
+        </button>
+        <button class="btn" id="fsBtn" title="Toggle Fullscreen">&#x26F6;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Documentation & Spec Details -->
+  <div class="doc-section">
+    <div class="card">
+      <h2>Scene Narration & Documentary Breakdown</h2>
+      <p><strong>Narration:</strong> <em>“In the afternoon of November 24, 1971, a middle-aged man carrying a briefcase walked into Portland International Airport and purchased a one-way ticket to Seattle, Washington.”</em></p>
+      <ul>
+        <li><strong>Shot 1 (~2.8s) &mdash; Establishing Shot:</strong> Slow reveal of the modernist 1971 Portland International Airport terminal facade, geometric glass panels, horizontal neon light strips, and distant traveler silhouettes. Camera pushes in toward the entrance.</li>
+        <li><strong>Shot 2 (~3.0s) &mdash; Man Enters:</strong> The middle-aged man in a tailored 1971 suit walks calmly left-to-right through the terminal concourse, carrying a rectangular briefcase with natural stride kinematics.</li>
+        <li><strong>Shot 3 (~2.7s) &mdash; Approaching Counter:</strong> Tracking shot as he approaches the airline ticket desk. He halts naturally; the airline ticket agent and passenger face each other in quiet stillness.</li>
+        <li><strong>Shot 4 (~2.9s) &mdash; Buying the Ticket:</strong> Medium shot of the counter transaction. The man hands over payment; the agent validates and slides the rectangular ticket across the counter. The man accepts it.</li>
+        <li><strong>Shot 5 (~2.6s) &mdash; Destination Reveal:</strong> Close-up of the vintage Northwest Orient Airlines ticket in the man’s hand. Minimal text: <code>ONE WAY</code>, <code>PORTLAND &rarr; SEATTLE</code>, <code>NOV 24, 1971</code> with prominent typographic emphasis on <strong>SEATTLE</strong>. Fades to pure black.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Technical Specifications</h2>
+      <table class="spec-table">
+        <tr>
+          <td>Visual Style</td>
+          <td>Red-on-Black Minimalist Graphic</td>
+        </tr>
+        <tr>
+          <td>Palette</td>
+          <td>#000000 (Pure Black) / #FF2020 (Crimson)</td>
+        </tr>
+        <tr>
+          <td>Resolution</td>
+          <td>1920 &times; 1080 (16:9 Native)</td>
+        </tr>
+        <tr>
+          <td>Framerate</td>
+          <td>30 FPS (Deterministic Keyframes)</td>
+        </tr>
+        <tr>
+          <td>Total Duration</td>
+          <td>14.0 Seconds (420 Frames)</td>
+        </tr>
+        <tr>
+          <td>Code Architecture</td>
+          <td>Modular Scenes & Kinematic Physics</td>
+        </tr>
+      </table>
+
+      <a href="mystery_1971_portland_seattle.mp4" download="mystery_1971_portland_seattle.mp4" class="download-link" id="downloadBtn">
+        &#11015; DOWNLOAD 1080p MP4 VIDEO
+      </a>
+    </div>
+  </div>
+
+  <script src="src/animation.js"></script>
+  <script>
+    (function () {
+      const canvas = document.getElementById('viewport');
+      const ctx = canvas.getContext('2d');
+      const video = document.getElementById('videoPlayer');
+
+      const playBtn = document.getElementById('playBtn');
+      const playIcon = document.getElementById('playIcon');
+      const playText = document.getElementById('playText');
+      const prevFrameBtn = document.getElementById('prevFrameBtn');
+      const nextFrameBtn = document.getElementById('nextFrameBtn');
+      const loopBtn = document.getElementById('loopBtn');
+      const timeDisplay = document.getElementById('timeDisplay');
+      const shotBadge = document.getElementById('shotBadge');
+      const narrationOverlay = document.getElementById('narrationOverlay');
+
+      const timelineContainer = document.getElementById('timelineContainer');
+      const timelineTrack = document.getElementById('timelineTrack');
+      const timelineProgress = document.getElementById('timelineProgress');
+
+      const engineToggleBtn = document.getElementById('engineToggleBtn');
+      const engineLabel = document.getElementById('engineLabel');
+      const audioToggleBtn = document.getElementById('audioToggleBtn');
+      const audioLabel = document.getElementById('audioLabel');
+      const fsBtn = document.getElementById('fsBtn');
+      const shotBtns = document.querySelectorAll('.shot-btn');
+
+      const { CONFIG, renderFrame } = MysteryAnimation;
+      const DURATION = CONFIG.totalDuration;
+      const FPS = CONFIG.fps;
+
+      let currentTime = 0;
+      let isPlaying = false;
+      let isLooping = true;
+      let activeEngine = 'canvas'; // 'canvas' or 'video'
+      let audioEnabled = false;
+      let lastTimestamp = 0;
+      let audioCtx = null;
+      let ambientGain = null;
+
+      // Add shot markers to timeline track
+      CONFIG.shots.forEach((s) => {
+        const marker = document.createElement('div');
+        marker.className = 'shot-marker';
+        marker.style.left = `${(s.start / DURATION) * 100}%`;
+        timelineTrack.appendChild(marker);
+      });
+
+      // Synchronized Narration Subtitles text for each shot
+      const narrationMap = [
+        { start: 0.0, end: 2.8, text: '“In the afternoon of November 24, 1971...”' },
+        { start: 2.8, end: 5.8, text: '“...a middle-aged man carrying a briefcase walked into Portland International Airport...”' },
+        { start: 5.8, end: 8.5, text: '“...and approached the airline ticket counter...”' },
+        { start: 8.5, end: 11.4, text: '“...and purchased a one-way ticket...”' },
+        { start: 11.4, end: 14.0, text: '“...to Seattle, Washington.”' }
+      ];
+
+      function formatTime(t) {
+        const mins = Math.floor(t / 60);
+        const secs = Math.floor(t % 60);
+        const ms = Math.floor((t % 1) * 100);
+        return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(ms).padStart(2, '0')}`;
+      }
+
+      function updateUI(t) {
+        currentTime = Math.max(0, Math.min(DURATION, t));
+        const pct = (currentTime / DURATION) * 100;
+        timelineProgress.style.width = `${pct}%`;
+        timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(DURATION)}`;
+
+        // Current active shot badge
+        let curShot = CONFIG.shots[0];
+        for (let s of CONFIG.shots) {
+          if (currentTime >= s.start && currentTime <= s.end) {
+            curShot = s;
+            break;
+          }
+        }
+        shotBadge.textContent = `SHOT ${curShot.id}: ${curShot.name.toUpperCase()}`;
+
+        // Highlight active shot button
+        shotBtns.forEach((btn) => {
+          const btnTime = parseFloat(btn.dataset.time);
+          if (Math.abs(btnTime - curShot.start) < 0.1) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+
+        // Narration text sync
+        let currentNarration = '';
+        for (let n of narrationMap) {
+          if (currentTime >= n.start && currentTime <= n.end) {
+            currentNarration = n.text;
+            break;
+          }
+        }
+        narrationOverlay.textContent = currentNarration || narrationMap[0].text;
+
+        // Render canvas if active
+        if (activeEngine === 'canvas') {
+          renderFrame(ctx, currentTime);
+        }
+      }
+
+      // Web Audio API Ambience Generator (Atmospheric 1970s analog tape hum & filtered concourse tone)
+      function initAudio() {
+        if (audioCtx) return;
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContext();
+
+          // Sub-bass 55Hz documentary drone
+          const osc = audioCtx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(55, audioCtx.currentTime);
+
+          // Filtered noise for 1970s analog tape room tone
+          const bufferSize = audioCtx.sampleRate * 2;
+          const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+          const output = noiseBuffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            output[i] = (Math.random() * 2 - 1) * 0.05;
+          }
+          const whiteNoise = audioCtx.createBufferSource();
+          whiteNoise.buffer = noiseBuffer;
+          whiteNoise.loop = true;
+
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(280, audioCtx.currentTime);
+
+          ambientGain = audioCtx.createGain();
+          ambientGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+
+          osc.connect(ambientGain);
+          whiteNoise.connect(filter);
+          filter.connect(ambientGain);
+          ambientGain.connect(audioCtx.destination);
+
+          osc.start();
+          whiteNoise.start();
+        } catch (e) {
+          console.warn('Audio not supported:', e);
+        }
+      }
+
+      function setAudioActive(active) {
+        audioEnabled = active;
+        if (audioEnabled) {
+          initAudio();
+          if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+          }
+          if (ambientGain) {
+            ambientGain.gain.setTargetAtTime(isPlaying ? 0.35 : 0.05, audioCtx.currentTime, 0.2);
+          }
+          audioLabel.innerHTML = '&#128266; AMBIENCE';
+          audioToggleBtn.classList.add('active');
+        } else {
+          if (ambientGain && audioCtx) {
+            ambientGain.gain.setTargetAtTime(0.0001, audioCtx.currentTime, 0.1);
+          }
+          audioLabel.innerHTML = '&#128263; AMBIENCE';
+          audioToggleBtn.classList.remove('active');
+        }
+      }
+
+      // Animation Loop for Canvas Engine
+      function animLoop(timestamp) {
+        if (!lastTimestamp) lastTimestamp = timestamp;
+        const delta = (timestamp - lastTimestamp) / 1000;
+        lastTimestamp = timestamp;
+
+        if (isPlaying && activeEngine === 'canvas') {
+          currentTime += delta;
+          if (currentTime >= DURATION) {
+            if (isLooping) {
+              currentTime = 0;
+            } else {
+              currentTime = DURATION;
+              pause();
+            }
+          }
+          updateUI(currentTime);
+        }
+
+        requestAnimationFrame(animLoop);
+      }
+
+      function play() {
+        isPlaying = true;
+        playIcon.innerHTML = '&#10074;&#10074;';
+        playText.textContent = 'PAUSE';
+
+        if (activeEngine === 'video') {
+          video.currentTime = currentTime;
+          video.play().catch(() => {});
+        }
+
+        if (audioEnabled && ambientGain && audioCtx) {
+          ambientGain.gain.setTargetAtTime(0.35, audioCtx.currentTime, 0.2);
+        }
+      }
+
+      function pause() {
+        isPlaying = false;
+        playIcon.innerHTML = '&#9654;';
+        playText.textContent = 'PLAY';
+
+        if (activeEngine === 'video') {
+          video.pause();
+        }
+
+        if (audioEnabled && ambientGain && audioCtx) {
+          ambientGain.gain.setTargetAtTime(0.08, audioCtx.currentTime, 0.2);
+        }
+      }
+
+      function togglePlay() {
+        if (isPlaying) {
+          pause();
+        } else {
+          if (currentTime >= DURATION) currentTime = 0;
+          play();
+        }
+      }
+
+      // Scrubber Interaction
+      function seek(e) {
+        const rect = timelineTrack.getBoundingClientRect();
+        const clickX = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+        const targetTime = (clickX / rect.width) * DURATION;
+        currentTime = targetTime;
+        if (activeEngine === 'video') {
+          video.currentTime = currentTime;
+        }
+        updateUI(currentTime);
+      }
+
+      let isDragging = false;
+      timelineContainer.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        seek(e);
+      });
+      window.addEventListener('mousemove', (e) => {
+        if (isDragging) seek(e);
+      });
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+
+      // Video sync listeners
+      video.addEventListener('timeupdate', () => {
+        if (activeEngine === 'video' && isPlaying) {
+          updateUI(video.currentTime);
+        }
+      });
+      video.addEventListener('ended', () => {
+        if (isLooping) {
+          video.currentTime = 0;
+          video.play();
+        } else {
+          pause();
+        }
+      });
+
+      // UI Listeners
+      playBtn.addEventListener('click', togglePlay);
+
+      prevFrameBtn.addEventListener('click', () => {
+        pause();
+        currentTime = Math.max(0, currentTime - 1 / FPS);
+        if (activeEngine === 'video') video.currentTime = currentTime;
+        updateUI(currentTime);
+      });
+
+      nextFrameBtn.addEventListener('click', () => {
+        pause();
+        currentTime = Math.min(DURATION, currentTime + 1 / FPS);
+        if (activeEngine === 'video') video.currentTime = currentTime;
+        updateUI(currentTime);
+      });
+
+      loopBtn.addEventListener('click', () => {
+        isLooping = !isLooping;
+        loopBtn.classList.toggle('active', isLooping);
+      });
+      loopBtn.classList.add('active'); // default loop enabled
+
+      shotBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const t = parseFloat(btn.dataset.time);
+          currentTime = t;
+          if (activeEngine === 'video') video.currentTime = currentTime;
+          updateUI(currentTime);
+        });
+      });
+
+      engineToggleBtn.addEventListener('click', () => {
+        if (activeEngine === 'canvas') {
+          activeEngine = 'video';
+          canvas.style.display = 'none';
+          video.style.display = 'block';
+          engineLabel.textContent = 'ENGINE: MP4 VIDEO';
+          video.currentTime = currentTime;
+          if (isPlaying) video.play();
+        } else {
+          activeEngine = 'canvas';
+          video.pause();
+          video.style.display = 'none';
+          canvas.style.display = 'block';
+          engineLabel.textContent = 'ENGINE: CANVAS 2D';
+          updateUI(currentTime);
+        }
+      });
+
+      audioToggleBtn.addEventListener('click', () => {
+        setAudioActive(!audioEnabled);
+      });
+
+      fsBtn.addEventListener('click', () => {
+        const wrap = document.getElementById('viewportWrapper');
+        if (!document.fullscreenElement) {
+          wrap.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      });
+
+      // Keyboard Controls
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+          e.preventDefault();
+          togglePlay();
+        } else if (e.code === 'ArrowLeft') {
+          e.preventDefault();
+          pause();
+          currentTime = Math.max(0, currentTime - (e.shiftKey ? 1.0 : 1 / FPS));
+          if (activeEngine === 'video') video.currentTime = currentTime;
+          updateUI(currentTime);
+        } else if (e.code === 'ArrowRight') {
+          e.preventDefault();
+          pause();
+          currentTime = Math.min(DURATION, currentTime + (e.shiftKey ? 1.0 : 1 / FPS));
+          if (activeEngine === 'video') video.currentTime = currentTime;
+          updateUI(currentTime);
+        }
+      });
+
+      // Initial Render
+      updateUI(0);
+      requestAnimationFrame(animLoop);
+    })();
+  </script>
+</body>
+</html>
